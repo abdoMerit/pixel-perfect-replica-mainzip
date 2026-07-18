@@ -1,13 +1,14 @@
 import { createFileRoute, useSearch } from "@tanstack/react-router";
-import { useState } from "react";
-import { Heart, CheckCircle2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Heart, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import { SiteLayout, PageHero, SectionEyebrow } from "@/components/site-layout";
-import { createDonationCheckout } from "@/lib/donate-fn";
+import { createDonationCheckout, verifyDonationSession, type DonationVerification } from "@/lib/donate-fn";
 
 export const Route = createFileRoute("/donate")({
   validateSearch: (search: Record<string, unknown>) => ({
     success: search.success === "1" || search.success === 1,
     cancelled: search.cancelled === "1" || search.cancelled === 1,
+    session_id: typeof search.session_id === "string" ? search.session_id : null,
   }),
   head: () => ({
     meta: [
@@ -20,8 +21,97 @@ export const Route = createFileRoute("/donate")({
   component: DonatePage,
 });
 
+function SuccessPage({ sessionId }: { sessionId: string | null }) {
+  const [verification, setVerification] = useState<DonationVerification | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!sessionId) {
+      // No session ID — cannot verify
+      setVerification({ verified: false, reason: "No payment session found." });
+      setLoading(false);
+      return;
+    }
+
+    verifyDonationSession({ data: { sessionId } })
+      .then((result) => {
+        setVerification(result);
+      })
+      .catch(() => {
+        setVerification({ verified: false, reason: "Verification failed. Please contact us." });
+      })
+      .finally(() => setLoading(false));
+  }, [sessionId]);
+
+  return (
+    <SiteLayout>
+      <PageHero title="Donate" breadcrumb="Donate" />
+      <section className="py-20">
+        <div className="mx-auto max-w-lg px-4 text-center">
+          {loading ? (
+            <>
+              <Loader2 className="mx-auto h-16 w-16 animate-spin text-[var(--brand-green)]" />
+              <h2 className="mt-6 font-display text-2xl font-extrabold text-[var(--brand-navy)]">
+                Confirming your donation…
+              </h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Just a moment while we verify your payment.
+              </p>
+            </>
+          ) : verification?.verified ? (
+            <>
+              <CheckCircle2 className="mx-auto h-16 w-16 text-[var(--brand-green)]" />
+              <h2 className="mt-6 font-display text-3xl font-extrabold text-[var(--brand-navy)]">
+                Thank You!
+              </h2>
+              <p className="mt-3 text-muted-foreground">
+                Your donation of{" "}
+                <strong>
+                  ${((verification.amountCents ?? 0) / 100).toFixed(2)}
+                </strong>{" "}
+                has been confirmed. You'll receive a receipt by email shortly.
+                Every gift makes a real difference in the communities we serve.
+              </p>
+              <a
+                href="/donate"
+                className="mt-8 inline-block rounded bg-[var(--brand-orange)] px-6 py-3 text-sm font-semibold text-white shadow hover:brightness-110 transition"
+              >
+                Donate Again
+              </a>
+            </>
+          ) : (
+            <>
+              <XCircle className="mx-auto h-16 w-16 text-red-500" />
+              <h2 className="mt-6 font-display text-2xl font-extrabold text-[var(--brand-navy)]">
+                We couldn't confirm your payment
+              </h2>
+              <p className="mt-3 text-sm text-muted-foreground">
+                {(verification as { verified: false; reason: string })?.reason ??
+                  "We were unable to verify your donation at this time."}
+              </p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                If you believe you were charged, please{" "}
+                <a href="/contact" className="text-[var(--brand-green)] underline">
+                  contact us
+                </a>{" "}
+                and we'll look into it right away.
+              </p>
+              <a
+                href="/donate"
+                className="mt-8 inline-block rounded bg-[var(--brand-orange)] px-6 py-3 text-sm font-semibold text-white shadow hover:brightness-110 transition"
+              >
+                Try Again
+              </a>
+            </>
+          )}
+        </div>
+      </section>
+    </SiteLayout>
+  );
+}
+
 function DonatePage() {
-  const { success, cancelled } = useSearch({ from: "/donate" });
+  const { success, cancelled, session_id } = useSearch({ from: "/donate" });
   const amounts = [25, 50, 100, 250, 500, 1000];
   const [amount, setAmount] = useState<number | "">(50);
   const [name, setName] = useState("");
@@ -59,27 +149,7 @@ function DonatePage() {
   }
 
   if (success) {
-    return (
-      <SiteLayout>
-        <PageHero title="Donate" breadcrumb="Donate" />
-        <section className="py-20">
-          <div className="mx-auto max-w-lg px-4 text-center">
-            <CheckCircle2 className="mx-auto h-16 w-16 text-[var(--brand-green)]" />
-            <h2 className="mt-6 font-display text-3xl font-extrabold text-[var(--brand-navy)]">Thank You!</h2>
-            <p className="mt-3 text-muted-foreground">
-              Your donation has been received. You'll get a receipt by email shortly.
-              Every gift makes a real difference in the communities we serve.
-            </p>
-            <a
-              href="/donate"
-              className="mt-8 inline-block rounded bg-[var(--brand-orange)] px-6 py-3 text-sm font-semibold text-white shadow hover:brightness-110 transition"
-            >
-              Donate Again
-            </a>
-          </div>
-        </section>
-      </SiteLayout>
-    );
+    return <SuccessPage sessionId={session_id} />;
   }
 
   return (

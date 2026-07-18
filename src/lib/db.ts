@@ -35,5 +35,17 @@ export async function ensureSchema(): Promise<void> {
       submitted_at TIMESTAMPTZ DEFAULT NOW()
     )
   `);
+  await query(`
+    CREATE TABLE IF NOT EXISTS donations (
+      id                  SERIAL PRIMARY KEY,
+      stripe_session_id   TEXT NOT NULL UNIQUE,
+      amount_cents        INTEGER NOT NULL,
+      currency            TEXT NOT NULL DEFAULT 'usd',
+      donor_name          TEXT,
+      donor_email         TEXT,
+      status              TEXT NOT NULL DEFAULT 'completed',
+      created_at          TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
   schemaInitialized = true;
 }
