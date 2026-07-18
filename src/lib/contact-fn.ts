@@ -60,3 +60,40 @@ export const getSubmissions = createServerFn({ method: "POST" })
 
     return { submissions: result.rows as ContactSubmission[] };
   });
+
+export const exportSubmissionsCsv = createServerFn({ method: "POST" })
+  .validator((data: unknown) => AdminAuthSchema.parse(data))
+  .handler(async ({ data }) => {
+    const adminPassword = process.env.SESSION_SECRET;
+    if (!adminPassword || data.password !== adminPassword) {
+      throw new Error("Unauthorized");
+    }
+
+    await ensureSchema();
+
+    const result = await query(
+      `SELECT id, name, email, subject, message, submitted_at
+       FROM contact_submissions
+       ORDER BY submitted_at DESC`,
+    );
+
+    const rows = result.rows as ContactSubmission[];
+
+    const escape = (v: string | null | undefined) => {
+      if (v == null) return "";
+      const s = String(v).replace(/"/g, '""');
+      return /[",\n\r]/.test(s) ? `"${s}"` : s;
+    };
+
+    const header = ["ID", "Name", "Email", "Subject", "Message", "Submitted At"];
+    const lines = [
+      header.join(","),
+      ...rows.map((r) =>
+        [r.id, r.name, r.email, r.subject ?? "", r.message, r.submitted_at]
+          .map((v) => escape(String(v ?? "")))
+          .join(","),
+      ),
+    ];
+
+    return { csv: lines.join("\r\n") };
+  });

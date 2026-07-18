@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Lock, LogIn, Mail, User, MessageSquare, Calendar, Tag } from "lucide-react";
-import { getSubmissions, type ContactSubmission } from "@/lib/contact-fn";
+import { Lock, LogIn, Mail, User, MessageSquare, Calendar, Tag, Download } from "lucide-react";
+import { getSubmissions, exportSubmissionsCsv, type ContactSubmission } from "@/lib/contact-fn";
 
 export const Route = createFileRoute("/admin/submissions")({
   head: () => ({
@@ -14,6 +14,7 @@ function AdminSubmissionsPage() {
   const [password, setPassword] = useState("");
   const [submissions, setSubmissions] = useState<ContactSubmission[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleLogin(e: React.FormEvent) {
@@ -27,6 +28,22 @@ function AdminSubmissionsPage() {
       setError("Incorrect password. Please try again.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleExport() {
+    setExporting(true);
+    try {
+      const result = await exportSubmissionsCsv({ data: { password } });
+      const blob = new Blob([result.csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `uff-contact-submissions-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
     }
   }
 
@@ -93,13 +110,24 @@ function AdminSubmissionsPage() {
               {submissions.length} message{submissions.length !== 1 ? "s" : ""} received
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => { setSubmissions(null); setPassword(""); }}
-            className="rounded border border-white/20 px-3 py-1.5 text-xs text-white/80 hover:bg-white/10 transition"
-          >
-            Sign out
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handleExport}
+              disabled={exporting}
+              className="inline-flex items-center gap-1.5 rounded border border-white/20 px-3 py-1.5 text-xs text-white/80 hover:bg-white/10 transition disabled:opacity-60"
+            >
+              <Download className="h-3.5 w-3.5" />
+              {exporting ? "Exporting…" : "Export CSV"}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setSubmissions(null); setPassword(""); }}
+              className="rounded border border-white/20 px-3 py-1.5 text-xs text-white/80 hover:bg-white/10 transition"
+            >
+              Sign out
+            </button>
+          </div>
         </div>
       </div>
 
