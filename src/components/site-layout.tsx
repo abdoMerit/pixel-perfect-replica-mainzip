@@ -40,7 +40,7 @@ function TopBar() {
     <div className="bg-[var(--brand-navy-deep)] text-white/90 text-xs">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-2.5">
         <div className="flex flex-wrap items-center gap-5">
-          <a href="mailto:info@uff.org" className="flex items-center gap-1.5 hover:text-[var(--brand-green)]"><Mail className="h-3.5 w-3.5 text-[var(--brand-green)]" /> info@uff.org</a>
+          <a href="mailto:info@uniquefuturefoundation.org" className="flex items-center gap-1.5 hover:text-[var(--brand-green)]"><Mail className="h-3.5 w-3.5 text-[var(--brand-green)]" /> info@uniquefuturefoundation.org</a>
           <a href="tel:+252907303587" className="flex items-center gap-1.5 hover:text-[var(--brand-green)]"><Phone className="h-3.5 w-3.5 text-[var(--brand-green)]" /> +252 90 730 3587</a>
           <span className="hidden md:flex items-center gap-1.5"><Clock className="h-3.5 w-3.5 text-[var(--brand-green)]" /> Mon - Fri: 8:00AM - 5:00PM</span>
         </div>
@@ -128,7 +128,7 @@ function Footer() {
           <ul className="mt-4 space-y-2.5 text-xs text-white/70">
             <li className="flex gap-2"><MapPin className="h-4 w-4 mt-0.5 text-[var(--brand-green)]" /> 1 Aug, Garowe<br />Puntland, Somalia</li>
             <li className="flex gap-2"><Phone className="h-4 w-4 text-[var(--brand-green)]" /> +252 90 730 3587</li>
-            <li className="flex gap-2"><Mail className="h-4 w-4 text-[var(--brand-green)]" /> info@uff.org</li>
+            <li className="flex gap-2"><Mail className="h-4 w-4 text-[var(--brand-green)]" /> info@uniquefuturefoundation.org</li>
             <li className="flex gap-2"><Clock className="h-4 w-4 text-[var(--brand-green)]" /> Mon - Fri: 8AM - 5PM</li>
           </ul>
         </div>

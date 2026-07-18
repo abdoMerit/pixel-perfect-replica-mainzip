@@ -24,7 +24,7 @@ function ContactPage() {
   const items = [
     { icon: MapPin, title: "Our Office", text: "1 Aug, Garowe\nPuntland, Somalia" },
     { icon: Phone, title: "Call Us", text: "+252 90 730 3587" },
-    { icon: Mail, title: "Email Us", text: "info@uff.org" },
+    { icon: Mail, title: "Email Us", text: "info@uniquefuturefoundation.org" },
     { icon: Clock, title: "Working Hours", text: "Mon - Fri: 8AM - 5PM" },
   ];
 
