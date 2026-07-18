@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import {
   Mail, Phone, Clock, Facebook, Twitter, Linkedin, Instagram, Youtube,
-  Search, Heart, ChevronDown, ArrowRight, Globe, HandHeart, MapPin, ArrowUp,
+  Search, Heart, ChevronDown, ArrowRight, Globe, HandHeart, MapPin, ArrowUp, Lock,
 } from "lucide-react";
 
 export const NAV: { label: string; to: string }[] = [
@@ -85,67 +85,85 @@ function Header() {
 }
 
 function Footer() {
-  const cols = [
-    { title: "Quick Links", items: [
-      { label: "About Us", to: "/about" },
-      { label: "Our Programs", to: "/programs" },
-      { label: "Our Projects", to: "/projects" },
-      { label: "News & Updates", to: "/news" },
-      { label: "Events", to: "/events" },
-      { label: "Contact", to: "/contact" },
-    ]},
-    { title: "Resources", items: [
-      { label: "Publications", to: "/about" },
-      { label: "Reports", to: "/about" },
-      { label: "Gallery", to: "/projects" },
-      { label: "FAQs", to: "/contact" },
-      { label: "Downloads", to: "/about" },
-      { label: "Privacy Policy", to: "/contact" },
-    ]},
+  const quickLinks = [
+    { label: "About Us", to: "/about" },
+    { label: "Our Programs", to: "/programs" },
+    { label: "Our Projects", to: "/projects" },
+    { label: "News & Updates", to: "/news" },
+    { label: "Events", to: "/events" },
+    { label: "Contact", to: "/contact" },
+  ];
+  const resources = [
+    { label: "Publications", to: "/about" },
+    { label: "Reports", to: "/about" },
+    { label: "Gallery", to: "/projects" },
+    { label: "FAQs", to: "/contact" },
+    { label: "Downloads", to: "/about" },
+    { label: "Privacy Policy", to: "/contact" },
   ];
   return (
     <footer className="bg-[var(--brand-navy-deep)] text-white/85">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 md:grid-cols-2 lg:grid-cols-5">
-        <div className="lg:col-span-1">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 md:grid-cols-2 lg:grid-cols-6">
+
+        {/* Brand + tagline */}
+        <div className="lg:col-span-2">
           <Logo light />
           <p className="mt-4 text-xs leading-relaxed text-white/70">
             We are committed to building a better future by empowering communities and creating sustainable solutions.
           </p>
           <div className="mt-5 flex gap-3 text-white/70">
-            <a href="https://www.facebook.com/" target="_blank" rel="noreferrer" aria-label="Facebook"><Facebook className="h-4 w-4" /></a>
+            <a href="https://www.facebook.com/" target="_blank" rel="noreferrer" aria-label="Facebook"><Facebook className="h-4 w-4 hover:text-[var(--brand-green)] transition" /></a>
           </div>
         </div>
-        {cols.map((c) => (
-          <div key={c.title}>
-            <h4 className="font-semibold text-white">{c.title}</h4>
-            <ul className="mt-4 space-y-2 text-xs text-white/70">
-              {c.items.map((i) => <li key={i.label}><Link to={i.to} className="hover:text-[var(--brand-green)]">{i.label}</Link></li>)}
-            </ul>
-          </div>
-        ))}
+
+        {/* Quick Links */}
+        <div>
+          <h4 className="font-semibold text-white">Quick Links</h4>
+          <ul className="mt-4 space-y-2 text-xs text-white/70">
+            {quickLinks.map((i) => (
+              <li key={i.label}><Link to={i.to} className="hover:text-[var(--brand-green)] transition">{i.label}</Link></li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Resources */}
+        <div>
+          <h4 className="font-semibold text-white">Resources</h4>
+          <ul className="mt-4 space-y-2 text-xs text-white/70">
+            {resources.map((i) => (
+              <li key={i.label}><Link to={i.to} className="hover:text-[var(--brand-green)] transition">{i.label}</Link></li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Contact Us */}
         <div>
           <h4 className="font-semibold text-white">Contact Us</h4>
           <ul className="mt-4 space-y-2.5 text-xs text-white/70">
-            <li className="flex gap-2"><MapPin className="h-4 w-4 mt-0.5 text-[var(--brand-green)]" /> 1 Aug, Garowe<br />Puntland, Somalia</li>
-            <li className="flex gap-2"><Phone className="h-4 w-4 text-[var(--brand-green)]" /> +252 90 730 3587</li>
-            <li className="flex gap-2"><Mail className="h-4 w-4 text-[var(--brand-green)]" /> info@uniquefuturefoundation.org</li>
-            <li className="flex gap-2"><Clock className="h-4 w-4 text-[var(--brand-green)]" /> Mon - Fri: 8AM - 5PM</li>
+            <li className="flex gap-2"><MapPin className="h-4 w-4 mt-0.5 shrink-0 text-[var(--brand-green)]" /> 1 Aug, Garowe<br />Puntland, Somalia</li>
+            <li className="flex gap-2"><Phone className="h-4 w-4 shrink-0 text-[var(--brand-green)]" /> +252 90 730 3587</li>
+            <li className="flex gap-2"><Mail className="h-4 w-4 shrink-0 text-[var(--brand-green)]" /> info@uniquefuturefoundation.org</li>
+            <li className="flex gap-2"><Clock className="h-4 w-4 shrink-0 text-[var(--brand-green)]" /> Mon - Fri: 8AM - 5PM</li>
           </ul>
         </div>
+
+        {/* Staff */}
         <div>
-          <h4 className="font-semibold text-white">Newsletter</h4>
-          <p className="mt-4 text-xs text-white/70">Subscribe to our newsletter to get the latest updates and news.</p>
-          <form
-            onSubmit={(e) => { e.preventDefault(); (e.currentTarget as HTMLFormElement).reset(); alert("Thanks for subscribing!"); }}
-            className="mt-4 space-y-3"
+          <h4 className="font-semibold text-white">Staff</h4>
+          <p className="mt-4 text-xs leading-relaxed text-white/70">
+            Are you a member of the UFF team? Access the staff portal to manage website content.
+          </p>
+          <Link
+            to="/admin"
+            className="mt-5 inline-flex items-center gap-2 rounded border border-white/20 bg-white/10 px-4 py-2.5 text-xs font-semibold text-white backdrop-blur-sm hover:bg-[var(--brand-green)] hover:border-[var(--brand-green)] transition"
           >
-            <input required type="email" placeholder="Enter your email" className="w-full rounded bg-white px-3 py-2.5 text-xs text-[var(--brand-navy)] outline-none" />
-            <button type="submit" className="inline-flex w-full items-center justify-center gap-2 rounded bg-[var(--brand-green)] py-2.5 text-xs font-semibold text-white hover:brightness-110 transition">
-              Subscribe <ArrowRight className="h-3.5 w-3.5" />
-            </button>
-          </form>
+            <Lock className="h-3.5 w-3.5" /> Staff Login
+          </Link>
         </div>
+
       </div>
+
+      {/* Bottom bar */}
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4 text-[11px] text-white/60">
           <div>© 2025 Unique Future Foundation (UFF). All Rights Reserved.</div>
@@ -153,6 +171,9 @@ function Footer() {
             <Link to="/contact" className="hover:text-white">Terms of Use</Link>
             <Link to="/contact" className="hover:text-white">Privacy Policy</Link>
             <Link to="/contact" className="hover:text-white">Sitemap</Link>
+            <Link to="/admin" className="flex items-center gap-1 hover:text-[var(--brand-green)]">
+              <Lock className="h-3 w-3" /> Staff Login
+            </Link>
           </div>
         </div>
       </div>
