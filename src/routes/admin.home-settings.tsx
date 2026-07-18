@@ -10,7 +10,7 @@ export const Route = createFileRoute("/admin/home-settings")({
 });
 
 function HomeSettingsPage() {
-  const { password } = useAdmin();
+  const { token } = useAdmin();
   const [settings, setSettings] = useState<SiteSettings>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -31,7 +31,7 @@ function HomeSettingsPage() {
     setError(null);
     setSaved(false);
     try {
-      await adminUpdateSettings({ data: { password, settings } });
+      await adminUpdateSettings({ data: { token, settings } });
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch {

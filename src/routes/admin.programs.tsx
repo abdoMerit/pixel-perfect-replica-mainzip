@@ -10,7 +10,7 @@ export const Route = createFileRoute("/admin/programs")({
 });
 
 function ProgramsAdminPage() {
-  const { password } = useAdmin();
+  const { token } = useAdmin();
   const [programs, setPrograms] = useState<ProgramData[]>([]);
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState<string | null>(null);
@@ -69,7 +69,7 @@ function ProgramsAdminPage() {
     setSaving(slug);
     setError(null);
     try {
-      await adminUpdateProgram({ data: { password, ...f } });
+      await adminUpdateProgram({ data: { token, ...f } });
       setSaved(slug);
       setTimeout(() => setSaved(null), 2000);
     } catch {

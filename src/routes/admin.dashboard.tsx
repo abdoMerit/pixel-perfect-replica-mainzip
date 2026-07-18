@@ -40,16 +40,16 @@ function StatCard({
 }
 
 function DashboardPage() {
-  const { password } = useAdmin();
+  const { token } = useAdmin();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    adminGetDashboardStats({ data: { password } })
+    adminGetDashboardStats({ data: { token } })
       .then((r) => setStats(r.stats))
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [password]);
+  }, [token]);
 
   return (
     <div>

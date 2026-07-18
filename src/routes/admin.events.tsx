@@ -19,7 +19,7 @@ const empty = (): FormState => ({
 });
 
 function EventsAdminPage() {
-  const { password } = useAdmin();
+  const { token } = useAdmin();
   const [events, setEvents] = useState<CmsEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState<FormState | null>(null); // null = list view
@@ -50,9 +50,9 @@ function EventsAdminPage() {
     setError(null);
     try {
       if (form.id) {
-        await adminUpdateEvent({ data: { password, ...form, id: form.id, sort_order: form.sort_order ?? 0 } });
+        await adminUpdateEvent({ data: { token, ...form, id: form.id, sort_order: form.sort_order ?? 0 } });
       } else {
-        await adminCreateEvent({ data: { password, ...form, sort_order: form.sort_order ?? 0 } });
+        await adminCreateEvent({ data: { token, ...form, sort_order: form.sort_order ?? 0 } });
       }
       setForm(null);
       await load();
@@ -67,7 +67,7 @@ function EventsAdminPage() {
     if (!confirm("Delete this event?")) return;
     setDeletingId(id);
     try {
-      await adminDeleteEvent({ data: { password, id } });
+      await adminDeleteEvent({ data: { token, id } });
       await load();
     } finally {
       setDeletingId(null);

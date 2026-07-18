@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { query, ensureSchema } from "./db";
+import { verifyStaffToken } from "./auth-fn";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -54,21 +55,13 @@ export type DashboardStats = {
 
 // ── Auth helper ───────────────────────────────────────────────────────────────
 
-const AuthSchema = z.object({ password: z.string().min(1) });
+const AuthSchema = z.object({ token: z.string().min(1) });
 
-function requireAdmin(password: string) {
+function requireAdmin(token: string) {
   const secret = process.env.SESSION_SECRET;
-  if (!secret || password !== secret) throw new Error("Unauthorized");
+  try { verifyStaffToken(token); } catch(e) { throw new Error("Unauthorized"); }
 }
 
-// ── Public: verify password ───────────────────────────────────────────────────
-
-export const verifyAdminPassword = createServerFn({ method: "POST" })
-  .validator((d: unknown) => AuthSchema.parse(d))
-  .handler(async ({ data }) => {
-    requireAdmin(data.password);
-    return { ok: true };
-  });
 
 // ── Public: settings ──────────────────────────────────────────────────────────
 
@@ -85,10 +78,10 @@ export const getPublicSettings = createServerFn({ method: "GET" })
 
 export const adminUpdateSettings = createServerFn({ method: "POST" })
   .validator((d: unknown) =>
-    z.object({ password: z.string(), settings: z.record(z.string()) }).parse(d),
+    z.object({ token: z.string(), settings: z.record(z.string()) }).parse(d),
   )
   .handler(async ({ data }) => {
-    requireAdmin(data.password);
+    requireAdmin(data.token);
     await ensureSchema();
     for (const [k, v] of Object.entries(data.settings)) {
       await query(
@@ -115,7 +108,7 @@ export const getPublicEvents = createServerFn({ method: "GET" })
 // ── Admin: events CRUD ────────────────────────────────────────────────────────
 
 const EventSchema = z.object({
-  password: z.string(),
+  token: z.string(),
   title: z.string().min(1),
   event_date: z.string().min(1),
   event_time: z.string().optional(),
@@ -127,7 +120,7 @@ const EventSchema = z.object({
 export const adminCreateEvent = createServerFn({ method: "POST" })
   .validator((d: unknown) => EventSchema.parse(d))
   .handler(async ({ data }) => {
-    requireAdmin(data.password);
+    requireAdmin(data.token);
     await ensureSchema();
     await query(
       `INSERT INTO events (title, event_date, event_time, location, description, sort_order)
@@ -140,7 +133,7 @@ export const adminCreateEvent = createServerFn({ method: "POST" })
 export const adminUpdateEvent = createServerFn({ method: "POST" })
   .validator((d: unknown) => EventSchema.extend({ id: z.number() }).parse(d))
   .handler(async ({ data }) => {
-    requireAdmin(data.password);
+    requireAdmin(data.token);
     await ensureSchema();
     await query(
       `UPDATE events SET title=$1, event_date=$2, event_time=$3, location=$4, description=$5, sort_order=$6 WHERE id=$7`,
@@ -150,9 +143,9 @@ export const adminUpdateEvent = createServerFn({ method: "POST" })
   });
 
 export const adminDeleteEvent = createServerFn({ method: "POST" })
-  .validator((d: unknown) => z.object({ password: z.string(), id: z.number() }).parse(d))
+  .validator((d: unknown) => z.object({ token: z.string(), id: z.number() }).parse(d))
   .handler(async ({ data }) => {
-    requireAdmin(data.password);
+    requireAdmin(data.token);
     await ensureSchema();
     await query(`DELETE FROM events WHERE id=$1`, [data.id]);
     return { ok: true };
@@ -173,7 +166,7 @@ export const getPublicNews = createServerFn({ method: "GET" })
 // ── Admin: news CRUD ──────────────────────────────────────────────────────────
 
 const NewsSchema = z.object({
-  password: z.string(),
+  token: z.string(),
   title: z.string().min(1),
   published_date: z.string().min(1),
   excerpt: z.string().optional(),
@@ -184,7 +177,7 @@ const NewsSchema = z.object({
 export const adminCreateNews = createServerFn({ method: "POST" })
   .validator((d: unknown) => NewsSchema.parse(d))
   .handler(async ({ data }) => {
-    requireAdmin(data.password);
+    requireAdmin(data.token);
     await ensureSchema();
     await query(
       `INSERT INTO news_articles (title, published_date, excerpt, image_url, sort_order) VALUES ($1,$2,$3,$4,$5)`,
@@ -196,7 +189,7 @@ export const adminCreateNews = createServerFn({ method: "POST" })
 export const adminUpdateNews = createServerFn({ method: "POST" })
   .validator((d: unknown) => NewsSchema.extend({ id: z.number() }).parse(d))
   .handler(async ({ data }) => {
-    requireAdmin(data.password);
+    requireAdmin(data.token);
     await ensureSchema();
     await query(
       `UPDATE news_articles SET title=$1, published_date=$2, excerpt=$3, image_url=$4, sort_order=$5 WHERE id=$6`,
@@ -206,9 +199,9 @@ export const adminUpdateNews = createServerFn({ method: "POST" })
   });
 
 export const adminDeleteNews = createServerFn({ method: "POST" })
-  .validator((d: unknown) => z.object({ password: z.string(), id: z.number() }).parse(d))
+  .validator((d: unknown) => z.object({ token: z.string(), id: z.number() }).parse(d))
   .handler(async ({ data }) => {
-    requireAdmin(data.password);
+    requireAdmin(data.token);
     await ensureSchema();
     await query(`DELETE FROM news_articles WHERE id=$1`, [data.id]);
     return { ok: true };
@@ -229,7 +222,7 @@ export const getPublicProjects = createServerFn({ method: "GET" })
 // ── Admin: projects CRUD ──────────────────────────────────────────────────────
 
 const ProjectSchema = z.object({
-  password: z.string(),
+  token: z.string(),
   title: z.string().min(1),
   location: z.string().optional(),
   category: z.string().optional(),
@@ -240,7 +233,7 @@ const ProjectSchema = z.object({
 export const adminCreateProject = createServerFn({ method: "POST" })
   .validator((d: unknown) => ProjectSchema.parse(d))
   .handler(async ({ data }) => {
-    requireAdmin(data.password);
+    requireAdmin(data.token);
     await ensureSchema();
     await query(
       `INSERT INTO projects (title, location, category, image_url, sort_order) VALUES ($1,$2,$3,$4,$5)`,
@@ -252,7 +245,7 @@ export const adminCreateProject = createServerFn({ method: "POST" })
 export const adminUpdateProject = createServerFn({ method: "POST" })
   .validator((d: unknown) => ProjectSchema.extend({ id: z.number() }).parse(d))
   .handler(async ({ data }) => {
-    requireAdmin(data.password);
+    requireAdmin(data.token);
     await ensureSchema();
     await query(
       `UPDATE projects SET title=$1, location=$2, category=$3, image_url=$4, sort_order=$5 WHERE id=$6`,
@@ -262,9 +255,9 @@ export const adminUpdateProject = createServerFn({ method: "POST" })
   });
 
 export const adminDeleteProject = createServerFn({ method: "POST" })
-  .validator((d: unknown) => z.object({ password: z.string(), id: z.number() }).parse(d))
+  .validator((d: unknown) => z.object({ token: z.string(), id: z.number() }).parse(d))
   .handler(async ({ data }) => {
-    requireAdmin(data.password);
+    requireAdmin(data.token);
     await ensureSchema();
     await query(`DELETE FROM projects WHERE id=$1`, [data.id]);
     return { ok: true };
@@ -296,7 +289,7 @@ const StatSchema = z.object({ n: z.string(), l: z.string() });
 export const adminUpdateProgram = createServerFn({ method: "POST" })
   .validator((d: unknown) =>
     z.object({
-      password: z.string(),
+      token: z.string(),
       slug: z.string(),
       title: z.string().min(1),
       tagline: z.string().optional(),
@@ -306,7 +299,7 @@ export const adminUpdateProgram = createServerFn({ method: "POST" })
     }).parse(d),
   )
   .handler(async ({ data }) => {
-    requireAdmin(data.password);
+    requireAdmin(data.token);
     await ensureSchema();
     await query(
       `UPDATE programs SET title=$1, tagline=$2, summary=$3, highlights=$4::jsonb, stats=$5::jsonb WHERE slug=$6`,
@@ -327,7 +320,7 @@ export const adminUpdateProgram = createServerFn({ method: "POST" })
 export const adminGetDashboardStats = createServerFn({ method: "POST" })
   .validator((d: unknown) => AuthSchema.parse(d))
   .handler(async ({ data }) => {
-    requireAdmin(data.password);
+    requireAdmin(data.token);
     await ensureSchema();
     const [evts, news, projs, subs, doms] = await Promise.all([
       query(`SELECT COUNT(*) FROM events`),

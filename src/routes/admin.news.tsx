@@ -19,7 +19,7 @@ const empty = (): FormState => ({
 });
 
 function NewsAdminPage() {
-  const { password } = useAdmin();
+  const { token } = useAdmin();
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState<FormState | null>(null);
@@ -50,9 +50,9 @@ function NewsAdminPage() {
     setError(null);
     try {
       if (form.id) {
-        await adminUpdateNews({ data: { password, ...form, id: form.id } });
+        await adminUpdateNews({ data: { token, ...form, id: form.id } });
       } else {
-        await adminCreateNews({ data: { password, ...form } });
+        await adminCreateNews({ data: { token, ...form } });
       }
       setForm(null);
       await load();
@@ -67,7 +67,7 @@ function NewsAdminPage() {
     if (!confirm("Delete this article?")) return;
     setDeletingId(id);
     try {
-      await adminDeleteNews({ data: { password, id } });
+      await adminDeleteNews({ data: { token, id } });
       await load();
     } finally {
       setDeletingId(null);

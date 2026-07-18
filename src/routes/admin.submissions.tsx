@@ -10,7 +10,7 @@ export const Route = createFileRoute("/admin/submissions")({
 });
 
 function SubmissionsPage() {
-  const { password } = useAdmin();
+  const { token } = useAdmin();
   const [submissions, setSubmissions] = useState<ContactSubmission[]>([]);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
@@ -18,7 +18,7 @@ function SubmissionsPage() {
   async function load() {
     setLoading(true);
     try {
-      const r = await getSubmissions({ data: { password } });
+      const r = await getSubmissions({ data: { token } });
       setSubmissions(r.submissions);
     } finally {
       setLoading(false);
@@ -30,7 +30,7 @@ function SubmissionsPage() {
   async function handleExport() {
     setExporting(true);
     try {
-      const r = await exportSubmissionsCsv({ data: { password } });
+      const r = await exportSubmissionsCsv({ data: { token } });
       const blob = new Blob([r.csv], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");

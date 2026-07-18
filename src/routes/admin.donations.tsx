@@ -14,7 +14,7 @@ function fmt(cents: number, currency: string) {
 }
 
 function DonationsPage() {
-  const { password } = useAdmin();
+  const { token } = useAdmin();
   const [donations, setDonations] = useState<Donation[]>([]);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
@@ -22,7 +22,7 @@ function DonationsPage() {
   async function load() {
     setLoading(true);
     try {
-      const r = await getDonations({ data: { password } });
+      const r = await getDonations({ data: { token } });
       setDonations(r.donations);
     } finally {
       setLoading(false);
@@ -34,7 +34,7 @@ function DonationsPage() {
   async function handleExport() {
     setExporting(true);
     try {
-      const r = await exportDonationsCsv({ data: { password } });
+      const r = await exportDonationsCsv({ data: { token } });
       const blob = new Blob([r.csv], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");

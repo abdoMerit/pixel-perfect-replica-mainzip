@@ -100,6 +100,15 @@ export async function ensureSchema(): Promise<void> {
       stats      JSONB DEFAULT '[]'
     )
   `);
+  await query(`
+    CREATE TABLE IF NOT EXISTS staff_users (
+      id            SERIAL PRIMARY KEY,
+      name          TEXT NOT NULL,
+      email         TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      created_at    TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
 
   // ── Seed site_settings ───────────────────────────────────────────────
   const defaults: [string, string][] = [

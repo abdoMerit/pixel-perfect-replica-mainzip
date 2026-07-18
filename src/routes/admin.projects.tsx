@@ -21,7 +21,7 @@ const empty = (): FormState => ({
 const CATEGORIES = ["Education", "Health", "Environment", "Livelihood", "Other"];
 
 function ProjectsAdminPage() {
-  const { password } = useAdmin();
+  const { token } = useAdmin();
   const [projects, setProjects] = useState<CmsProject[]>([]);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState<FormState | null>(null);
@@ -52,9 +52,9 @@ function ProjectsAdminPage() {
     setError(null);
     try {
       if (form.id) {
-        await adminUpdateProject({ data: { password, ...form, id: form.id } });
+        await adminUpdateProject({ data: { token, ...form, id: form.id } });
       } else {
-        await adminCreateProject({ data: { password, ...form } });
+        await adminCreateProject({ data: { token, ...form } });
       }
       setForm(null);
       await load();
@@ -69,7 +69,7 @@ function ProjectsAdminPage() {
     if (!confirm("Delete this project?")) return;
     setDeletingId(id);
     try {
-      await adminDeleteProject({ data: { password, id } });
+      await adminDeleteProject({ data: { token, id } });
       await load();
     } finally {
       setDeletingId(null);

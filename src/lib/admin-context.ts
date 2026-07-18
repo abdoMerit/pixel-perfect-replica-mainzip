@@ -1,10 +1,16 @@
 import { createContext, useContext } from "react";
 
 export interface AdminContextValue {
-  password: string;
+  token: string;
+  email: string;
+  name: string;
 }
 
-export const AdminContext = createContext<AdminContextValue>({ password: "" });
+export const AdminContext = createContext<AdminContextValue>({
+  token: "",
+  email: "",
+  name: "",
+});
 
 export function useAdmin(): AdminContextValue {
   return useContext(AdminContext);

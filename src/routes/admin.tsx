@@ -1,12 +1,12 @@
 import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
-  LogIn, LayoutDashboard, Calendar, Newspaper, FolderKanban,
+  LogIn, UserPlus, LayoutDashboard, Calendar, Newspaper, FolderKanban,
   BookOpen, Settings2, MessageSquare, DollarSign, ChevronRight,
-  LogOut, Menu, X, Home, Info,
+  LogOut, Menu, Home, Info, User,
 } from "lucide-react";
 import { AdminContext } from "@/lib/admin-context";
-import { verifyAdminPassword } from "@/lib/content-fn";
+import { staffLogin, staffRegister } from "@/lib/auth-fn";
 
 export const Route = createFileRoute("/admin")({
   component: AdminLayoutRoute,
@@ -20,17 +20,17 @@ const NAV = [
   {
     label: "Content",
     items: [
-      { icon: Calendar,      label: "Events",    to: "/admin/events"    as const },
-      { icon: Newspaper,     label: "News",      to: "/admin/news"      as const },
-      { icon: FolderKanban,  label: "Projects",  to: "/admin/projects"  as const },
-      { icon: BookOpen,      label: "Programs",  to: "/admin/programs"  as const },
+      { icon: Calendar,     label: "Events",   to: "/admin/events"   as const },
+      { icon: Newspaper,    label: "News",     to: "/admin/news"     as const },
+      { icon: FolderKanban, label: "Projects", to: "/admin/projects" as const },
+      { icon: BookOpen,     label: "Programs", to: "/admin/programs" as const },
     ],
   },
   {
     label: "Settings",
     items: [
-      { icon: Home,     label: "Home Page",  to: "/admin/home-settings"  as const },
-      { icon: Info,     label: "About Page", to: "/admin/about-settings" as const },
+      { icon: Home, label: "Home Page",  to: "/admin/home-settings"  as const },
+      { icon: Info, label: "About Page", to: "/admin/about-settings" as const },
     ],
   },
   {
@@ -42,127 +42,333 @@ const NAV = [
   },
 ];
 
-function AdminLayoutRoute() {
-  const [password, setPassword] = useState<string>(
-    () => (typeof window !== "undefined" ? sessionStorage.getItem("uff-admin-pw") ?? "" : ""),
-  );
-  const [authed, setAuthed] = useState<boolean>(
-    () => (typeof window !== "undefined" ? sessionStorage.getItem("uff-admin-authed") === "1" : false),
-  );
-  const [inputPw, setInputPw] = useState("");
+// ── Auth screen ───────────────────────────────────────────────────────────────
+
+type Tab = "login" | "register";
+
+function AuthScreen({
+  onAuth,
+}: {
+  onAuth: (token: string, email: string, name: string) => void;
+}) {
+  const [tab, setTab] = useState<Tab>("login");
+
+  // Login state
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPw, setLoginPw]       = useState("");
+
+  // Register state
+  const [regName,  setRegName]  = useState("");
+  const [regEmail, setRegEmail] = useState("");
+  const [regPw,    setRegPw]    = useState("");
+  const [regPw2,   setRegPw2]   = useState("");
+
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [error,   setError]   = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setLoading(true);
     try {
-      await verifyAdminPassword({ data: { password: inputPw } });
-      sessionStorage.setItem("uff-admin-pw", inputPw);
-      sessionStorage.setItem("uff-admin-authed", "1");
-      setPassword(inputPw);
-      setAuthed(true);
-    } catch {
-      setError("Incorrect password. Please try again.");
+      const r = await staffLogin({ data: { email: loginEmail, password: loginPw } });
+      onAuth(r.token, r.email, r.name);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Login failed");
     } finally {
       setLoading(false);
     }
   }
 
+  async function handleRegister(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    if (regPw !== regPw2) { setError("Passwords do not match"); return; }
+    setLoading(true);
+    try {
+      const r = await staffRegister({ data: { name: regName, email: regEmail, password: regPw } });
+      onAuth(r.token, r.email, r.name);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Registration failed");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const inputCls =
+    "w-full rounded border border-border bg-white px-3 py-2.5 text-sm outline-none focus:border-[var(--brand-green)] focus:ring-1 focus:ring-[var(--brand-green)]/20";
+  const labelCls = "mb-1.5 block text-xs font-semibold text-[var(--brand-navy)]";
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12">
+      <div className="w-full max-w-sm">
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <img
+            src="/uff-icon.png"
+            alt="UFF"
+            className="mx-auto mb-4 h-16 w-16 rounded-full object-cover shadow-md"
+          />
+          <h1 className="font-display text-2xl font-extrabold text-[var(--brand-navy)]">
+            Staff Portal
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">Unique Future Foundation</p>
+        </div>
+
+        {/* Tab switcher */}
+        <div className="mb-5 flex rounded-lg border border-border bg-white p-1 shadow-sm">
+          <button
+            type="button"
+            onClick={() => { setTab("login"); setError(null); setSuccess(null); }}
+            className={`flex flex-1 items-center justify-center gap-2 rounded-md py-2 text-sm font-semibold transition ${
+              tab === "login"
+                ? "bg-[var(--brand-navy)] text-white shadow"
+                : "text-muted-foreground hover:text-[var(--brand-navy)]"
+            }`}
+          >
+            <LogIn className="h-4 w-4" /> Sign In
+          </button>
+          <button
+            type="button"
+            onClick={() => { setTab("register"); setError(null); setSuccess(null); }}
+            className={`flex flex-1 items-center justify-center gap-2 rounded-md py-2 text-sm font-semibold transition ${
+              tab === "register"
+                ? "bg-[var(--brand-navy)] text-white shadow"
+                : "text-muted-foreground hover:text-[var(--brand-navy)]"
+            }`}
+          >
+            <UserPlus className="h-4 w-4" /> Register
+          </button>
+        </div>
+
+        <div className="rounded-lg border border-border bg-white p-6 shadow-sm">
+          {/* ── Login form ── */}
+          {tab === "login" && (
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <label className={labelCls}>Email Address</label>
+                <input
+                  type="email"
+                  required
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label className={labelCls}>Password</label>
+                <input
+                  type="password"
+                  required
+                  value={loginPw}
+                  onChange={(e) => setLoginPw(e.target.value)}
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                  className={inputCls}
+                />
+              </div>
+              {error && (
+                <p className="rounded bg-red-50 px-3 py-2 text-xs font-medium text-red-700">
+                  {error}
+                </p>
+              )}
+              <button
+                type="submit"
+                disabled={loading}
+                className="inline-flex w-full items-center justify-center gap-2 rounded bg-[var(--brand-navy)] px-4 py-2.5 text-sm font-semibold text-white shadow hover:brightness-110 transition disabled:opacity-60"
+              >
+                <LogIn className="h-4 w-4" />
+                {loading ? "Signing in…" : "Sign In"}
+              </button>
+              <p className="text-center text-xs text-muted-foreground">
+                Don't have an account?{" "}
+                <button
+                  type="button"
+                  onClick={() => { setTab("register"); setError(null); }}
+                  className="font-semibold text-[var(--brand-green-dark)] hover:underline"
+                >
+                  Register here
+                </button>
+              </p>
+            </form>
+          )}
+
+          {/* ── Register form ── */}
+          {tab === "register" && (
+            <form onSubmit={handleRegister} className="space-y-4">
+              <div>
+                <label className={labelCls}>Full Name</label>
+                <input
+                  type="text"
+                  required
+                  value={regName}
+                  onChange={(e) => setRegName(e.target.value)}
+                  placeholder="Your full name"
+                  autoComplete="name"
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label className={labelCls}>Email Address</label>
+                <input
+                  type="email"
+                  required
+                  value={regEmail}
+                  onChange={(e) => setRegEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label className={labelCls}>Password</label>
+                <input
+                  type="password"
+                  required
+                  minLength={6}
+                  value={regPw}
+                  onChange={(e) => setRegPw(e.target.value)}
+                  placeholder="At least 6 characters"
+                  autoComplete="new-password"
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label className={labelCls}>Confirm Password</label>
+                <input
+                  type="password"
+                  required
+                  minLength={6}
+                  value={regPw2}
+                  onChange={(e) => setRegPw2(e.target.value)}
+                  placeholder="Repeat your password"
+                  autoComplete="new-password"
+                  className={inputCls}
+                />
+              </div>
+              {error && (
+                <p className="rounded bg-red-50 px-3 py-2 text-xs font-medium text-red-700">
+                  {error}
+                </p>
+              )}
+              {success && (
+                <p className="rounded bg-green-50 px-3 py-2 text-xs font-medium text-green-700">
+                  {success}
+                </p>
+              )}
+              <button
+                type="submit"
+                disabled={loading}
+                className="inline-flex w-full items-center justify-center gap-2 rounded bg-[var(--brand-green)] px-4 py-2.5 text-sm font-semibold text-white shadow hover:brightness-110 transition disabled:opacity-60"
+              >
+                <UserPlus className="h-4 w-4" />
+                {loading ? "Creating account…" : "Create Account"}
+              </button>
+              <p className="text-center text-xs text-muted-foreground">
+                Already have an account?{" "}
+                <button
+                  type="button"
+                  onClick={() => { setTab("login"); setError(null); }}
+                  className="font-semibold text-[var(--brand-green-dark)] hover:underline"
+                >
+                  Sign in here
+                </button>
+              </p>
+            </form>
+          )}
+        </div>
+
+        <p className="mt-6 text-center text-xs text-muted-foreground">
+          <Link to="/" className="hover:text-[var(--brand-navy)]">← Back to website</Link>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ── Admin layout (authenticated) ──────────────────────────────────────────────
+
+function AdminLayoutRoute() {
+  const stored =
+    typeof window !== "undefined"
+      ? {
+          token: sessionStorage.getItem("uff-admin-token") ?? "",
+          email: sessionStorage.getItem("uff-admin-email") ?? "",
+          name:  sessionStorage.getItem("uff-admin-name")  ?? "",
+        }
+      : { token: "", email: "", name: "" };
+
+  const [session, setSession] = useState(stored);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const authed = Boolean(session.token);
+
+  function handleAuth(token: string, email: string, name: string) {
+    sessionStorage.setItem("uff-admin-token", token);
+    sessionStorage.setItem("uff-admin-email", email);
+    sessionStorage.setItem("uff-admin-name",  name);
+    setSession({ token, email, name });
+  }
+
   function handleSignOut() {
-    sessionStorage.removeItem("uff-admin-pw");
-    sessionStorage.removeItem("uff-admin-authed");
-    setAuthed(false);
-    setPassword("");
-    setInputPw("");
+    sessionStorage.removeItem("uff-admin-token");
+    sessionStorage.removeItem("uff-admin-email");
+    sessionStorage.removeItem("uff-admin-name");
+    setSession({ token: "", email: "", name: "" });
   }
 
   if (!authed) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-        <div className="w-full max-w-sm">
-          <div className="mb-8 text-center">
-            <img src="/uff-icon.png" alt="UFF" className="mx-auto mb-4 h-14 w-14 rounded-full object-cover shadow" />
-            <h1 className="font-display text-2xl font-extrabold text-[var(--brand-navy)]">Admin Panel</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Unique Future Foundation</p>
-          </div>
-          <form
-            onSubmit={handleLogin}
-            className="rounded-lg border border-border bg-white p-6 shadow-sm space-y-4"
-          >
-            <div>
-              <label htmlFor="admin-pw" className="mb-1.5 block text-xs font-semibold text-[var(--brand-navy)]">
-                Admin Password
-              </label>
-              <input
-                id="admin-pw"
-                type="password"
-                required
-                value={inputPw}
-                onChange={(e) => setInputPw(e.target.value)}
-                placeholder="Enter admin password"
-                autoComplete="current-password"
-                className="w-full rounded border border-border bg-white px-3 py-2.5 text-sm outline-none focus:border-[var(--brand-green)] focus:ring-1 focus:ring-[var(--brand-green)]/20"
-              />
-            </div>
-            {error && <p className="text-xs text-red-600">{error}</p>}
-            <button
-              type="submit"
-              disabled={loading}
-              className="inline-flex w-full items-center justify-center gap-2 rounded bg-[var(--brand-navy)] px-4 py-2.5 text-sm font-semibold text-white shadow hover:brightness-110 transition disabled:opacity-60"
-            >
-              <LogIn className="h-4 w-4" />
-              {loading ? "Verifying…" : "Sign In"}
-            </button>
-          </form>
-        </div>
-      </div>
-    );
+    return <AuthScreen onAuth={handleAuth} />;
   }
 
   return (
-    <AdminContext.Provider value={{ password }}>
-      <div className="flex min-h-screen bg-slate-100">
+    <AdminContext.Provider value={session}>
+      <div className="flex min-h-screen bg-slate-50">
         {/* ── Sidebar ── */}
         <aside
-          className={`fixed inset-y-0 left-0 z-30 flex w-60 flex-col bg-[var(--brand-navy)] shadow-xl transition-transform duration-200 lg:translate-x-0 ${
-            mobileOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+          className={`fixed inset-y-0 left-0 z-30 flex w-60 flex-col bg-[var(--brand-navy-deep)] transition-transform duration-200
+            ${mobileOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
         >
           {/* Logo */}
           <div className="flex items-center gap-3 border-b border-white/10 px-5 py-4">
             <img src="/uff-icon.png" alt="UFF" className="h-8 w-8 rounded-full object-cover" />
-            <div className="flex-1 min-w-0">
-              <div className="truncate text-xs font-bold text-white">UFF Admin</div>
-              <div className="text-[10px] text-white/50">Content Manager</div>
+            <div className="leading-tight">
+              <div className="text-sm font-bold text-white">UFF Admin</div>
+              <div className="text-[10px] text-white/50">Staff Portal</div>
             </div>
-            <button
-              onClick={() => setMobileOpen(false)}
-              className="text-white/40 hover:text-white lg:hidden"
-            >
-              <X className="h-4 w-4" />
-            </button>
+          </div>
+
+          {/* User badge */}
+          <div className="mx-3 mt-3 flex items-center gap-2 rounded-md bg-white/10 px-3 py-2">
+            <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[var(--brand-green)] text-xs font-bold text-white">
+              {session.name.charAt(0).toUpperCase()}
+            </div>
+            <div className="min-w-0">
+              <div className="truncate text-xs font-semibold text-white">{session.name}</div>
+              <div className="truncate text-[10px] text-white/50">{session.email}</div>
+            </div>
           </div>
 
           {/* Nav */}
           <nav className="flex-1 overflow-y-auto px-3 py-4">
-            {NAV.map((section) => (
-              <div key={section.label} className="mb-5">
-                <div className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-white/35">
-                  {section.label}
+            {NAV.map((group) => (
+              <div key={group.label} className="mb-5">
+                <div className="mb-1.5 px-3 text-[9px] font-bold uppercase tracking-widest text-white/40">
+                  {group.label}
                 </div>
-                {section.items.map((item) => (
+                {group.items.map((item) => (
                   <Link
                     key={item.to}
                     to={item.to}
-                    activeProps={{ className: "bg-white/15 text-white font-semibold" }}
-                    inactiveProps={{ className: "text-white/65 hover:bg-white/10 hover:text-white" }}
-                    className="mb-0.5 flex items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors"
                     onClick={() => setMobileOpen(false)}
+                    activeOptions={{ exact: false }}
+                    className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm text-white/60 hover:bg-white/10 hover:text-white transition-colors data-[status=active]:bg-white/15 data-[status=active]:text-white"
                   >
-                    <item.icon className="h-4 w-4 flex-shrink-0" />
+                    <item.icon className="h-4 w-4 shrink-0" />
                     {item.label}
                   </Link>
                 ))}
@@ -170,14 +376,22 @@ function AdminLayoutRoute() {
             ))}
           </nav>
 
-          {/* Sign out */}
-          <div className="border-t border-white/10 px-3 py-4">
-            <button
-              onClick={handleSignOut}
-              className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm text-white/60 hover:bg-white/10 hover:text-white transition-colors"
+          {/* Footer */}
+          <div className="border-t border-white/10 px-3 py-3 space-y-1">
+            <a
+              href="/"
+              target="_blank"
+              rel="noreferrer"
+              className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm text-white/50 hover:bg-white/10 hover:text-white transition-colors"
             >
-              <LogOut className="h-4 w-4" />
-              Sign Out
+              <ChevronRight className="h-4 w-4" /> View Website
+            </a>
+            <button
+              type="button"
+              onClick={handleSignOut}
+              className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm text-white/50 hover:bg-white/10 hover:text-white transition-colors"
+            >
+              <LogOut className="h-4 w-4" /> Sign Out
             </button>
           </div>
         </aside>
@@ -192,7 +406,6 @@ function AdminLayoutRoute() {
 
         {/* ── Main ── */}
         <div className="flex min-h-screen flex-1 flex-col lg:ml-60">
-          {/* Top bar */}
           <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-border bg-white px-4 py-3 shadow-sm">
             <button
               onClick={() => setMobileOpen(true)}
@@ -204,18 +417,16 @@ function AdminLayoutRoute() {
             <span className="text-sm font-semibold text-[var(--brand-navy)]">
               Unique Future Foundation
             </span>
-            <a
-              href="/"
-              target="_blank"
-              rel="noreferrer"
-              className="ml-auto flex items-center gap-1 text-xs text-muted-foreground hover:text-[var(--brand-navy)] transition-colors"
-            >
-              View Site <ChevronRight className="h-3.5 w-3.5" />
-            </a>
-            <Settings2 className="h-4 w-4 text-muted-foreground/50" />
+            <div className="ml-auto flex items-center gap-3">
+              <span className="hidden text-xs text-muted-foreground sm:block">
+                Welcome, {session.name}
+              </span>
+              <div className="grid h-7 w-7 place-items-center rounded-full bg-[var(--brand-green)] text-xs font-bold text-white">
+                {session.name.charAt(0).toUpperCase()}
+              </div>
+            </div>
           </header>
 
-          {/* Page content */}
           <main className="flex-1 p-4 md:p-6">
             <Outlet />
           </main>
