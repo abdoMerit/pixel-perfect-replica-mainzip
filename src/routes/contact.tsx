@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Mail, Phone, MapPin, Clock, Send } from "lucide-react";
 import { SiteLayout, PageHero, SectionEyebrow } from "@/components/site-layout";
+import { submitContact } from "@/lib/contact-fn";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -17,12 +18,41 @@ export const Route = createFileRoute("/contact")({
 
 function ContactPage() {
   const [sent, setSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const items = [
     { icon: MapPin, title: "Our Office", text: "KM4, Hodan District\nMogadishu, Somalia" },
     { icon: Phone, title: "Call Us", text: "+252 61 2345678" },
     { icon: Mail, title: "Email Us", text: "info@uff.org" },
     { icon: Clock, title: "Working Hours", text: "Mon - Fri: 8AM - 5PM" },
   ];
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+    const form = e.currentTarget;
+    const data = new FormData(form);
+
+    setSubmitting(true);
+    try {
+      await submitContact({
+        data: {
+          name: data.get("name") as string,
+          email: data.get("email") as string,
+          subject: (data.get("subject") as string) || undefined,
+          message: data.get("message") as string,
+        },
+      });
+      form.reset();
+      setSent(true);
+    } catch {
+      setError("Something went wrong. Please try again or email us directly.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
     <SiteLayout>
       <PageHero title="Contact Us" breadcrumb="Contact" />
@@ -44,21 +74,56 @@ function ContactPage() {
               <SectionEyebrow label="Get In Touch" />
               <h2 className="mt-3 font-display text-3xl md:text-4xl font-extrabold text-[var(--brand-navy)]">Send Us A Message</h2>
               <p className="mt-3 text-sm text-muted-foreground">We'll get back within two business days.</p>
-              <form className="mt-8 space-y-4" onSubmit={(e) => { e.preventDefault(); (e.currentTarget as HTMLFormElement).reset(); setSent(true); }}>
+              <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <input required placeholder="Your Name" className="rounded border border-border bg-white px-3 py-2.5 text-sm outline-none focus:border-[var(--brand-green)]" />
-                  <input required type="email" placeholder="Email Address" className="rounded border border-border bg-white px-3 py-2.5 text-sm outline-none focus:border-[var(--brand-green)]" />
+                  <input
+                    required
+                    name="name"
+                    placeholder="Your Name"
+                    className="rounded border border-border bg-white px-3 py-2.5 text-sm outline-none focus:border-[var(--brand-green)]"
+                  />
+                  <input
+                    required
+                    type="email"
+                    name="email"
+                    placeholder="Email Address"
+                    className="rounded border border-border bg-white px-3 py-2.5 text-sm outline-none focus:border-[var(--brand-green)]"
+                  />
                 </div>
-                <input placeholder="Subject" className="w-full rounded border border-border bg-white px-3 py-2.5 text-sm outline-none focus:border-[var(--brand-green)]" />
-                <textarea required placeholder="Your message..." rows={6} className="w-full rounded border border-border bg-white px-3 py-2.5 text-sm outline-none focus:border-[var(--brand-green)]" />
-                <button type="submit" className="inline-flex items-center gap-2 rounded bg-[var(--brand-green)] px-6 py-3 text-sm font-semibold text-white shadow hover:brightness-110 transition">
-                  Send Message <Send className="h-4 w-4" />
+                <input
+                  name="subject"
+                  placeholder="Subject"
+                  className="w-full rounded border border-border bg-white px-3 py-2.5 text-sm outline-none focus:border-[var(--brand-green)]"
+                />
+                <textarea
+                  required
+                  name="message"
+                  placeholder="Your message..."
+                  rows={6}
+                  className="w-full rounded border border-border bg-white px-3 py-2.5 text-sm outline-none focus:border-[var(--brand-green)]"
+                />
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="inline-flex items-center gap-2 rounded bg-[var(--brand-green)] px-6 py-3 text-sm font-semibold text-white shadow hover:brightness-110 transition disabled:opacity-60"
+                >
+                  {submitting ? "Sending…" : "Send Message"} <Send className="h-4 w-4" />
                 </button>
-                {sent && <p className="text-xs text-[var(--brand-green-dark)]">Thanks! Your message has been sent.</p>}
+                {sent && (
+                  <p className="text-xs text-[var(--brand-green-dark)]">
+                    ✓ Thanks! Your message has been received. We'll be in touch within two business days.
+                  </p>
+                )}
+                {error && <p className="text-xs text-red-600">{error}</p>}
               </form>
             </div>
             <div className="overflow-hidden rounded-lg border border-border shadow-sm">
-              <iframe title="Map" src="https://www.openstreetmap.org/export/embed.html?bbox=45.28%2C2.02%2C45.38%2C2.09&layer=mapnik" className="h-full min-h-[420px] w-full" loading="lazy" />
+              <iframe
+                title="Map"
+                src="https://www.openstreetmap.org/export/embed.html?bbox=45.28%2C2.02%2C45.38%2C2.09&layer=mapnik"
+                className="h-full min-h-[420px] w-full"
+                loading="lazy"
+              />
             </div>
           </div>
         </div>
