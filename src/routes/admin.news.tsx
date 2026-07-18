@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Plus, Pencil, Trash2, Calendar, Save, X, Loader2, Image } from "lucide-react";
 import { useAdmin } from "@/lib/admin-context";
+import { ImageUpload } from "@/components/image-upload";
 import {
   getPublicNews, adminCreateNews, adminUpdateNews, adminDeleteNews,
   type NewsArticle,
@@ -109,8 +110,11 @@ function NewsAdminPage() {
               <input className="input" type="number" value={form.sort_order ?? 0} onChange={(e) => set("sort_order", parseInt(e.target.value) || 0)} />
             </div>
             <div className="sm:col-span-2">
-              <label className="label">Image URL</label>
-              <input className="input" placeholder="https://..." value={form.image_url ?? ""} onChange={(e) => set("image_url", e.target.value)} />
+              <ImageUpload
+                label="Article Image"
+                value={form.image_url ?? ""}
+                onChange={(url) => set("image_url", url)}
+              />
             </div>
             <div className="sm:col-span-2">
               <label className="label">Excerpt</label>

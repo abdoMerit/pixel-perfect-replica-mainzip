@@ -1,6 +1,5 @@
 import "./lib/error-capture";
 
-import { Client as ObjectStorage } from "@replit/object-storage";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { handleStripeWebhook } from "./lib/stripe-webhook";
@@ -14,8 +13,6 @@ const ALLOWED_TYPES: Record<string, string> = {
   "video/webm": "webm",
   "video/ogg":  "ogv",
 };
-
-const storage = new ObjectStorage();
 
 async function handleFileUpload(request: Request): Promise<Response> {
   try {
@@ -31,42 +28,17 @@ async function handleFileUpload(request: Request): Promise<Response> {
     }
 
     const ext = ALLOWED_TYPES[file.type] ?? file.name.split(".").pop()?.toLowerCase() ?? "bin";
-    const objectName = `media/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const safeName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const dir = "public/media";
 
-    const result = await storage.uploadFromBytes(objectName, buffer);
-    if (!result.ok) throw new Error(String(result.error));
+    const fs = await import("node:fs/promises");
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(`${dir}/${safeName}`, Buffer.from(await file.arrayBuffer()));
 
-    return Response.json({ url: `/api/media/${objectName.replace("media/", "")}` });
+    return Response.json({ url: `/media/${safeName}` });
   } catch (err) {
     console.error("[upload]", err);
     return Response.json({ error: "Upload failed" }, { status: 500 });
-  }
-}
-
-async function handleMediaServe(request: Request, objectKey: string): Promise<Response> {
-  try {
-    const result = await storage.downloadAsBytes(`media/${objectKey}`);
-    if (!result.ok) return new Response("Not found", { status: 404 });
-
-    const [buf] = result.value;
-    const ext = objectKey.split(".").pop()?.toLowerCase() ?? "";
-    const mimeMap: Record<string, string> = {
-      jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png",
-      webp: "image/webp", gif: "image/gif",
-      mp4: "video/mp4", webm: "video/webm", ogv: "video/ogg",
-    };
-    const contentType = mimeMap[ext] ?? "application/octet-stream";
-
-    return new Response(buf, {
-      headers: {
-        "Content-Type": contentType,
-        "Cache-Control": "public, max-age=31536000, immutable",
-      },
-    });
-  } catch (err) {
-    console.error("[media-serve]", err);
-    return new Response("Error", { status: 500 });
   }
 }
 
@@ -120,10 +92,6 @@ export default {
     }
     if (request.method === "POST" && url.pathname === "/api/upload") {
       return handleFileUpload(request);
-    }
-    if (request.method === "GET" && url.pathname.startsWith("/api/media/")) {
-      const objectKey = url.pathname.slice("/api/media/".length);
-      if (objectKey) return handleMediaServe(request, objectKey);
     }
 
     try {
