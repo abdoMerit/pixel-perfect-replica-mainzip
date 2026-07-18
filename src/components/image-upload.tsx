@@ -11,7 +11,7 @@
  */
 
 import { useRef, useState } from "react";
-import { Upload, Link2, X, Loader2, Image as ImageIcon, Video } from "lucide-react";
+import { Upload, X, Loader2, Image as ImageIcon, Video } from "lucide-react";
 
 type Props = {
   value: string;
@@ -35,8 +35,6 @@ export function ImageUpload({
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [urlMode, setUrlMode] = useState(false);
-  const [urlDraft, setUrlDraft] = useState("");
 
   async function handleFile(file: File) {
     setError(null);
@@ -68,12 +66,6 @@ export function ImageUpload({
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file) handleFile(file);
-  }
-
-  function applyUrl() {
-    const u = urlDraft.trim();
-    if (u) { onChange(u); setUrlDraft(""); }
-    setUrlMode(false);
   }
 
   const hasValue = Boolean(value);
@@ -138,63 +130,26 @@ export function ImageUpload({
         )}
       </div>
 
-      {/* URL input (inline when in urlMode) */}
-      {urlMode ? (
-        <div className="flex gap-2">
-          <input
-            type="url"
-            autoFocus
-            value={urlDraft}
-            onChange={(e) => setUrlDraft(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); applyUrl(); } }}
-            placeholder="https://example.com/image.jpg"
-            className="input flex-1 text-xs"
-          />
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={uploading}
+          className="inline-flex items-center gap-1.5 rounded border border-border bg-white px-3 py-1.5 text-xs font-semibold text-[var(--brand-navy)] hover:border-[var(--brand-green)] transition disabled:opacity-50"
+        >
+          <Upload className="h-3.5 w-3.5" />
+          {uploading ? "Uploading…" : "Upload File"}
+        </button>
+        {hasValue && (
           <button
             type="button"
-            onClick={applyUrl}
-            className="rounded bg-[var(--brand-navy)] px-3 py-1.5 text-xs font-semibold text-white hover:brightness-110 transition"
+            onClick={() => onChange("")}
+            className="inline-flex items-center gap-1.5 rounded border border-border bg-white px-3 py-1.5 text-xs font-semibold text-red-500 hover:border-red-400 transition"
           >
-            Apply
+            <X className="h-3.5 w-3.5" /> Remove
           </button>
-          <button
-            type="button"
-            onClick={() => setUrlMode(false)}
-            className="rounded border border-border px-3 py-1.5 text-xs text-muted-foreground hover:bg-slate-50 transition"
-          >
-            Cancel
-          </button>
-        </div>
-      ) : (
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => inputRef.current?.click()}
-            disabled={uploading}
-            className="inline-flex items-center gap-1.5 rounded border border-border bg-white px-3 py-1.5 text-xs font-semibold text-[var(--brand-navy)] hover:border-[var(--brand-green)] transition disabled:opacity-50"
-          >
-            <Upload className="h-3.5 w-3.5" />
-            {uploading ? "Uploading…" : "Upload File"}
-          </button>
-          <button
-            type="button"
-            onClick={() => { setUrlMode(true); setUrlDraft(value); }}
-            className="inline-flex items-center gap-1.5 rounded border border-border bg-white px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:border-[var(--brand-navy)] transition"
-          >
-            <Link2 className="h-3.5 w-3.5" />
-            Paste URL
-          </button>
-          {hasValue && (
-            <button
-              type="button"
-              onClick={() => onChange("")}
-              className="inline-flex items-center gap-1.5 rounded border border-border bg-white px-3 py-1.5 text-xs font-semibold text-red-500 hover:border-red-400 transition"
-            >
-              <X className="h-3.5 w-3.5" /> Remove
-            </button>
-          )}
-        </div>
-      )}
+        )}
+      </div>
 
       {error && <p className="text-xs text-red-600">{error}</p>}
       {hint && <p className="text-[11px] text-muted-foreground">{hint}</p>}
