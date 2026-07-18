@@ -53,10 +53,10 @@ function Hero() {
       <div className="relative -mt-14 px-4">
         <div className="mx-auto grid max-w-7xl grid-cols-2 md:grid-cols-4 rounded-md bg-[var(--brand-navy)] text-white shadow-xl">
           {[
-            { icon: Users, n: "120+", l: "Projects Completed", c: "text-cyan-300" },
-            { icon: Globe, n: "25+", l: "Countries Served", c: "text-[var(--brand-green)]" },
-            { icon: UserRound, n: "1.2M+", l: "People Impacted", c: "text-[var(--brand-orange)]" },
-            { icon: Users, n: "300+", l: "Partners Worldwide", c: "text-[var(--brand-purple)]" },
+            { icon: Users, n: "15+", l: "Projects Completed", c: "text-cyan-300" },
+            { icon: Globe, n: "2+", l: "Countries Served", c: "text-[var(--brand-green)]" },
+            { icon: UserRound, n: "1,000+", l: "People Impacted", c: "text-[var(--brand-orange)]" },
+            { icon: Users, n: "10+", l: "Partners Worldwide", c: "text-[var(--brand-purple)]" },
           ].map((s, i) => (
             <div key={i} className="flex items-center gap-4 border-white/10 px-6 py-6 md:border-r last:md:border-r-0">
               <s.icon className={`h-9 w-9 ${s.c}`} strokeWidth={1.75} />
@@ -113,12 +113,12 @@ function About() {
 
 function Impact() {
   const stats = [
-    { icon: Users, n: "1.2M+", l: "People Impacted", c: "var(--brand-blue)" },
-    { icon: Globe, n: "25+", l: "Countries Served", c: "var(--brand-green-dark)" },
-    { icon: Heart, n: "120+", l: "Projects Completed", c: "var(--brand-orange)" },
-    { icon: UserRound, n: "300+", l: "Partners & Supporters", c: "var(--brand-purple)" },
-    { icon: Calendar, n: "15+", l: "Years of Experience", c: "var(--brand-green-dark)" },
-    { icon: Briefcase, n: "250+", l: "Dedicated Staff", c: "var(--brand-blue)" },
+    { icon: Users, n: "1,000+", l: "People Impacted", c: "var(--brand-blue)" },
+    { icon: Globe, n: "2+", l: "Countries Served", c: "var(--brand-green-dark)" },
+    { icon: Heart, n: "15+", l: "Projects Completed", c: "var(--brand-orange)" },
+    { icon: UserRound, n: "10+", l: "Partners & Supporters", c: "var(--brand-purple)" },
+    { icon: Calendar, n: "5+", l: "Years of Experience", c: "var(--brand-green-dark)" },
+    { icon: Briefcase, n: "20+", l: "Dedicated Staff", c: "var(--brand-blue)" },
   ];
   return (
     <section className="bg-[var(--brand-bg-soft)] py-20">

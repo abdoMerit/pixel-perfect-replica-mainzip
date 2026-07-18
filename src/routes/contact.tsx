@@ -22,8 +22,8 @@ function ContactPage() {
   const [error, setError] = useState<string | null>(null);
 
   const items = [
-    { icon: MapPin, title: "Our Office", text: "KM4, Hodan District\nMogadishu, Somalia" },
-    { icon: Phone, title: "Call Us", text: "+252 61 2345678" },
+    { icon: MapPin, title: "Our Office", text: "1 Aug, Garowe\nPuntland, Somalia" },
+    { icon: Phone, title: "Call Us", text: "+252 90 730 3587" },
     { icon: Mail, title: "Email Us", text: "info@uff.org" },
     { icon: Clock, title: "Working Hours", text: "Mon - Fri: 8AM - 5PM" },
   ];

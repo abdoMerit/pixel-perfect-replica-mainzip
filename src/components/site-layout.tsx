@@ -40,18 +40,14 @@ function TopBar() {
     <div className="bg-[var(--brand-navy-deep)] text-white/90 text-xs">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-2.5">
         <div className="flex flex-wrap items-center gap-5">
-          <a href="mailto:info@organization.org" className="flex items-center gap-1.5 hover:text-[var(--brand-green)]"><Mail className="h-3.5 w-3.5 text-[var(--brand-green)]" /> info@organization.org</a>
-          <a href="tel:+252612345678" className="flex items-center gap-1.5 hover:text-[var(--brand-green)]"><Phone className="h-3.5 w-3.5 text-[var(--brand-green)]" /> +252 61 2345678</a>
+          <a href="mailto:info@uff.org" className="flex items-center gap-1.5 hover:text-[var(--brand-green)]"><Mail className="h-3.5 w-3.5 text-[var(--brand-green)]" /> info@uff.org</a>
+          <a href="tel:+252907303587" className="flex items-center gap-1.5 hover:text-[var(--brand-green)]"><Phone className="h-3.5 w-3.5 text-[var(--brand-green)]" /> +252 90 730 3587</a>
           <span className="hidden md:flex items-center gap-1.5"><Clock className="h-3.5 w-3.5 text-[var(--brand-green)]" /> Mon - Fri: 8:00AM - 5:00PM</span>
         </div>
         <div className="flex items-center gap-4">
           <button type="button" className="flex items-center gap-1"><Globe className="h-3.5 w-3.5" /> English <ChevronDown className="h-3 w-3" /></button>
           <div className="flex items-center gap-3 text-white/80">
-            <a href="#" aria-label="Facebook"><Facebook className="h-3.5 w-3.5" /></a>
-            <a href="#" aria-label="Twitter"><Twitter className="h-3.5 w-3.5" /></a>
-            <a href="#" aria-label="LinkedIn"><Linkedin className="h-3.5 w-3.5" /></a>
-            <a href="#" aria-label="Instagram"><Instagram className="h-3.5 w-3.5" /></a>
-            <a href="#" aria-label="YouTube"><Youtube className="h-3.5 w-3.5" /></a>
+            <a href="https://www.facebook.com/" target="_blank" rel="noreferrer" aria-label="Facebook"><Facebook className="h-3.5 w-3.5" /></a>
           </div>
         </div>
       </div>
@@ -116,11 +112,7 @@ function Footer() {
             We are committed to building a better future by empowering communities and creating sustainable solutions.
           </p>
           <div className="mt-5 flex gap-3 text-white/70">
-            <a href="#" aria-label="Facebook"><Facebook className="h-4 w-4" /></a>
-            <a href="#" aria-label="Twitter"><Twitter className="h-4 w-4" /></a>
-            <a href="#" aria-label="LinkedIn"><Linkedin className="h-4 w-4" /></a>
-            <a href="#" aria-label="Instagram"><Instagram className="h-4 w-4" /></a>
-            <a href="#" aria-label="YouTube"><Youtube className="h-4 w-4" /></a>
+            <a href="https://www.facebook.com/" target="_blank" rel="noreferrer" aria-label="Facebook"><Facebook className="h-4 w-4" /></a>
           </div>
         </div>
         {cols.map((c) => (
@@ -134,8 +126,8 @@ function Footer() {
         <div>
           <h4 className="font-semibold text-white">Contact Us</h4>
           <ul className="mt-4 space-y-2.5 text-xs text-white/70">
-            <li className="flex gap-2"><MapPin className="h-4 w-4 mt-0.5 text-[var(--brand-green)]" /> KM4, Hodan District<br />Mogadishu, Somalia</li>
-            <li className="flex gap-2"><Phone className="h-4 w-4 text-[var(--brand-green)]" /> +252 61 2345678</li>
+            <li className="flex gap-2"><MapPin className="h-4 w-4 mt-0.5 text-[var(--brand-green)]" /> 1 Aug, Garowe<br />Puntland, Somalia</li>
+            <li className="flex gap-2"><Phone className="h-4 w-4 text-[var(--brand-green)]" /> +252 90 730 3587</li>
             <li className="flex gap-2"><Mail className="h-4 w-4 text-[var(--brand-green)]" /> info@uff.org</li>
             <li className="flex gap-2"><Clock className="h-4 w-4 text-[var(--brand-green)]" /> Mon - Fri: 8AM - 5PM</li>
           </ul>
