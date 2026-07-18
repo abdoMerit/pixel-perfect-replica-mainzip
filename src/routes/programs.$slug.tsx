@@ -1,23 +1,53 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowRight, ArrowLeft, CheckCircle2, Heart } from "lucide-react";
 import { SiteLayout, PageHero, SectionEyebrow } from "@/components/site-layout";
-import { PROGRAMS, getProgram, type Program } from "@/data/programs";
+import { PROGRAMS } from "@/data/programs";
+import { getPublicProgram } from "@/lib/content-fn";
+
+// Serialisable-only loader output — no React components
+type LoaderData = {
+  slug: string;
+  title: string;
+  tagline: string | null;
+  summary: string | null;
+  highlights: { title: string; text: string }[];
+  stats: { n: string; l: string }[];
+};
 
 export const Route = createFileRoute("/programs/$slug")({
-  loader: ({ params }): { program: Program } => {
-    const program = getProgram(params.slug);
-    if (!program) throw notFound();
-    return { program };
+  loader: async ({ params }): Promise<LoaderData> => {
+    // Try DB first (has the latest edited content)
+    const r = await getPublicProgram({ data: { slug: params.slug } });
+    if (r.program) {
+      return {
+        slug: r.program.slug,
+        title: r.program.title,
+        tagline: r.program.tagline ?? null,
+        summary: r.program.summary ?? null,
+        highlights: Array.isArray(r.program.highlights) ? r.program.highlights : [],
+        stats: Array.isArray(r.program.stats) ? r.program.stats : [],
+      };
+    }
+    // Fallback to static data file (no DB yet)
+    const p = PROGRAMS.find((x) => x.slug === params.slug);
+    if (!p) throw notFound();
+    return {
+      slug: p.slug,
+      title: p.title,
+      tagline: p.tagline,
+      summary: p.summary,
+      highlights: p.highlights,
+      stats: p.stats,
+    };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return { meta: [{ title: "Program not found — UFF" }, { name: "robots", content: "noindex" }] };
-    const p = loaderData.program;
     return {
       meta: [
-        { title: `${p.title} Program — UFF` },
-        { name: "description", content: p.summary },
-        { property: "og:title", content: `${p.title} — UFF` },
-        { property: "og:description", content: p.tagline },
+        { title: `${loaderData.title} Program — UFF` },
+        { name: "description", content: loaderData.summary ?? "" },
+        { property: "og:title", content: `${loaderData.title} — UFF` },
+        { property: "og:description", content: loaderData.tagline ?? "" },
       ],
     };
   },
@@ -44,28 +74,35 @@ export const Route = createFileRoute("/programs/$slug")({
 });
 
 function ProgramDetail() {
-  const { program } = Route.useLoaderData();
-  const Icon = program.icon;
-  const others = PROGRAMS.filter((p) => p.slug !== program.slug);
+  const data = Route.useLoaderData();
+
+  // Look up non-serializable assets (icon, image, color) from static file
+  const staticProg = PROGRAMS.find((p) => p.slug === data.slug);
+  const Icon = staticProg?.icon ?? (() => null);
+  const img = staticProg?.img;
+  const color = staticProg?.color ?? "var(--brand-green-dark)";
+
+  const others = PROGRAMS.filter((p) => p.slug !== data.slug);
+
   return (
     <SiteLayout>
-      <PageHero title={program.title} breadcrumb={program.title} />
+      <PageHero title={data.title} breadcrumb={data.title} />
       <section className="py-20">
         <div className="mx-auto grid max-w-7xl gap-12 px-4 lg:grid-cols-[1.1fr_1fr]">
-          <img src={program.img} alt={program.title} className="w-full rounded-lg object-cover shadow-md" loading="lazy" />
+          {img && <img src={img} alt={data.title} className="w-full rounded-lg object-cover shadow-md" loading="lazy" />}
           <div>
             <div className="flex items-center gap-3">
-              <div className="grid h-12 w-12 place-items-center rounded-full" style={{ backgroundColor: program.color }}>
+              <div className="grid h-12 w-12 place-items-center rounded-full" style={{ backgroundColor: color }}>
                 <Icon className="h-5 w-5 text-white" />
               </div>
-              <SectionEyebrow label={`Program: ${program.title}`} />
+              <SectionEyebrow label={`Program: ${data.title}`} />
             </div>
-            <h2 className="mt-4 font-display text-3xl md:text-4xl font-extrabold text-[var(--brand-navy)]">{program.tagline}</h2>
-            <p className="mt-5 text-sm leading-relaxed text-muted-foreground">{program.summary}</p>
+            <h2 className="mt-4 font-display text-3xl md:text-4xl font-extrabold text-[var(--brand-navy)]">{data.tagline}</h2>
+            <p className="mt-5 text-sm leading-relaxed text-muted-foreground">{data.summary}</p>
             <div className="mt-8 grid grid-cols-2 gap-4">
-              {program.stats.map((s: Program["stats"][number]) => (
+              {data.stats.map((s) => (
                 <div key={s.l} className="rounded-lg border border-border p-4">
-                  <div className="text-2xl font-bold" style={{ color: program.color }}>{s.n}</div>
+                  <div className="text-2xl font-bold" style={{ color }}>{s.n}</div>
                   <div className="text-xs text-muted-foreground">{s.l}</div>
                 </div>
               ))}
@@ -86,9 +123,9 @@ function ProgramDetail() {
           <SectionEyebrow label="What We Do" />
           <h2 className="mt-3 font-display text-3xl font-extrabold text-[var(--brand-navy)]">Program Highlights</h2>
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {program.highlights.map((h: Program["highlights"][number]) => (
+            {data.highlights.map((h) => (
               <div key={h.title} className="rounded-lg border border-border bg-card p-6 shadow-sm">
-                <CheckCircle2 className="h-6 w-6" style={{ color: program.color }} />
+                <CheckCircle2 className="h-6 w-6" style={{ color }} />
                 <h3 className="mt-3 font-semibold text-[var(--brand-navy)]">{h.title}</h3>
                 <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{h.text}</p>
               </div>

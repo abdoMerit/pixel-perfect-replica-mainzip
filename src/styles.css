@@ -162,3 +162,14 @@
     color: var(--color-foreground);
   }
 }
+
+/* ── Admin form helpers ─────────────────────────────────────────────── */
+@layer components {
+  .label {
+    @apply mb-1.5 block text-xs font-semibold text-[var(--brand-navy)];
+  }
+  .input {
+    @apply w-full rounded border border-border bg-white px-3 py-2.5 text-sm outline-none
+           focus:border-[var(--brand-green)] focus:ring-1 focus:ring-[var(--brand-green)]/20;
+  }
+}

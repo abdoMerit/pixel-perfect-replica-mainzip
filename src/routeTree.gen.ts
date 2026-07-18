@@ -15,12 +15,21 @@ import { Route as NewsRouteImport } from './routes/news'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as DonateRouteImport } from './routes/donate'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProgramsIndexRouteImport } from './routes/programs.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ProgramsSlugRouteImport } from './routes/programs.$slug'
 import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions'
+import { Route as AdminProjectsRouteImport } from './routes/admin.projects'
+import { Route as AdminProgramsRouteImport } from './routes/admin.programs'
+import { Route as AdminNewsRouteImport } from './routes/admin.news'
+import { Route as AdminHomeSettingsRouteImport } from './routes/admin.home-settings'
+import { Route as AdminEventsRouteImport } from './routes/admin.events'
 import { Route as AdminDonationsRouteImport } from './routes/admin.donations'
+import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminAboutSettingsRouteImport } from './routes/admin.about-settings'
 
 const VolunteerRoute = VolunteerRouteImport.update({
   id: '/volunteer',
@@ -52,6 +61,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -67,34 +81,83 @@ const ProgramsIndexRoute = ProgramsIndexRouteImport.update({
   path: '/programs/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ProgramsSlugRoute = ProgramsSlugRouteImport.update({
   id: '/programs/$slug',
   path: '/programs/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminSubmissionsRoute = AdminSubmissionsRouteImport.update({
-  id: '/admin/submissions',
-  path: '/admin/submissions',
-  getParentRoute: () => rootRouteImport,
+  id: '/submissions',
+  path: '/submissions',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProjectsRoute = AdminProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProgramsRoute = AdminProgramsRouteImport.update({
+  id: '/programs',
+  path: '/programs',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminNewsRoute = AdminNewsRouteImport.update({
+  id: '/news',
+  path: '/news',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminHomeSettingsRoute = AdminHomeSettingsRouteImport.update({
+  id: '/home-settings',
+  path: '/home-settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEventsRoute = AdminEventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminDonationsRoute = AdminDonationsRouteImport.update({
-  id: '/admin/donations',
-  path: '/admin/donations',
-  getParentRoute: () => rootRouteImport,
+  id: '/donations',
+  path: '/donations',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAboutSettingsRoute = AdminAboutSettingsRouteImport.update({
+  id: '/about-settings',
+  path: '/about-settings',
+  getParentRoute: () => AdminRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/donate': typeof DonateRoute
   '/events': typeof EventsRoute
   '/news': typeof NewsRoute
   '/projects': typeof ProjectsRoute
   '/volunteer': typeof VolunteerRoute
+  '/admin/about-settings': typeof AdminAboutSettingsRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/donations': typeof AdminDonationsRoute
+  '/admin/events': typeof AdminEventsRoute
+  '/admin/home-settings': typeof AdminHomeSettingsRoute
+  '/admin/news': typeof AdminNewsRoute
+  '/admin/programs': typeof AdminProgramsRoute
+  '/admin/projects': typeof AdminProjectsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
   '/programs/$slug': typeof ProgramsSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/programs/': typeof ProgramsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -106,24 +169,41 @@ export interface FileRoutesByTo {
   '/news': typeof NewsRoute
   '/projects': typeof ProjectsRoute
   '/volunteer': typeof VolunteerRoute
+  '/admin/about-settings': typeof AdminAboutSettingsRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/donations': typeof AdminDonationsRoute
+  '/admin/events': typeof AdminEventsRoute
+  '/admin/home-settings': typeof AdminHomeSettingsRoute
+  '/admin/news': typeof AdminNewsRoute
+  '/admin/programs': typeof AdminProgramsRoute
+  '/admin/projects': typeof AdminProjectsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
   '/programs/$slug': typeof ProgramsSlugRoute
+  '/admin': typeof AdminIndexRoute
   '/programs': typeof ProgramsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/donate': typeof DonateRoute
   '/events': typeof EventsRoute
   '/news': typeof NewsRoute
   '/projects': typeof ProjectsRoute
   '/volunteer': typeof VolunteerRoute
+  '/admin/about-settings': typeof AdminAboutSettingsRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/donations': typeof AdminDonationsRoute
+  '/admin/events': typeof AdminEventsRoute
+  '/admin/home-settings': typeof AdminHomeSettingsRoute
+  '/admin/news': typeof AdminNewsRoute
+  '/admin/programs': typeof AdminProgramsRoute
+  '/admin/projects': typeof AdminProjectsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
   '/programs/$slug': typeof ProgramsSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/programs/': typeof ProgramsIndexRoute
 }
 export interface FileRouteTypes {
@@ -131,15 +211,24 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/admin'
     | '/contact'
     | '/donate'
     | '/events'
     | '/news'
     | '/projects'
     | '/volunteer'
+    | '/admin/about-settings'
+    | '/admin/dashboard'
     | '/admin/donations'
+    | '/admin/events'
+    | '/admin/home-settings'
+    | '/admin/news'
+    | '/admin/programs'
+    | '/admin/projects'
     | '/admin/submissions'
     | '/programs/$slug'
+    | '/admin/'
     | '/programs/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -151,37 +240,53 @@ export interface FileRouteTypes {
     | '/news'
     | '/projects'
     | '/volunteer'
+    | '/admin/about-settings'
+    | '/admin/dashboard'
     | '/admin/donations'
+    | '/admin/events'
+    | '/admin/home-settings'
+    | '/admin/news'
+    | '/admin/programs'
+    | '/admin/projects'
     | '/admin/submissions'
     | '/programs/$slug'
+    | '/admin'
     | '/programs'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/admin'
     | '/contact'
     | '/donate'
     | '/events'
     | '/news'
     | '/projects'
     | '/volunteer'
+    | '/admin/about-settings'
+    | '/admin/dashboard'
     | '/admin/donations'
+    | '/admin/events'
+    | '/admin/home-settings'
+    | '/admin/news'
+    | '/admin/programs'
+    | '/admin/projects'
     | '/admin/submissions'
     | '/programs/$slug'
+    | '/admin/'
     | '/programs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRouteWithChildren
   ContactRoute: typeof ContactRoute
   DonateRoute: typeof DonateRoute
   EventsRoute: typeof EventsRoute
   NewsRoute: typeof NewsRoute
   ProjectsRoute: typeof ProjectsRoute
   VolunteerRoute: typeof VolunteerRoute
-  AdminDonationsRoute: typeof AdminDonationsRoute
-  AdminSubmissionsRoute: typeof AdminSubmissionsRoute
   ProgramsSlugRoute: typeof ProgramsSlugRoute
   ProgramsIndexRoute: typeof ProgramsIndexRoute
 }
@@ -230,6 +335,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -251,6 +363,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProgramsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/programs/$slug': {
       id: '/programs/$slug'
       path: '/programs/$slug'
@@ -260,32 +379,108 @@ declare module '@tanstack/react-router' {
     }
     '/admin/submissions': {
       id: '/admin/submissions'
-      path: '/admin/submissions'
+      path: '/submissions'
       fullPath: '/admin/submissions'
       preLoaderRoute: typeof AdminSubmissionsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/projects': {
+      id: '/admin/projects'
+      path: '/projects'
+      fullPath: '/admin/projects'
+      preLoaderRoute: typeof AdminProjectsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/programs': {
+      id: '/admin/programs'
+      path: '/programs'
+      fullPath: '/admin/programs'
+      preLoaderRoute: typeof AdminProgramsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/news': {
+      id: '/admin/news'
+      path: '/news'
+      fullPath: '/admin/news'
+      preLoaderRoute: typeof AdminNewsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/home-settings': {
+      id: '/admin/home-settings'
+      path: '/home-settings'
+      fullPath: '/admin/home-settings'
+      preLoaderRoute: typeof AdminHomeSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/events': {
+      id: '/admin/events'
+      path: '/events'
+      fullPath: '/admin/events'
+      preLoaderRoute: typeof AdminEventsRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/donations': {
       id: '/admin/donations'
-      path: '/admin/donations'
+      path: '/donations'
       fullPath: '/admin/donations'
       preLoaderRoute: typeof AdminDonationsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/about-settings': {
+      id: '/admin/about-settings'
+      path: '/about-settings'
+      fullPath: '/admin/about-settings'
+      preLoaderRoute: typeof AdminAboutSettingsRouteImport
+      parentRoute: typeof AdminRoute
     }
   }
 }
 
+interface AdminRouteChildren {
+  AdminAboutSettingsRoute: typeof AdminAboutSettingsRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminDonationsRoute: typeof AdminDonationsRoute
+  AdminEventsRoute: typeof AdminEventsRoute
+  AdminHomeSettingsRoute: typeof AdminHomeSettingsRoute
+  AdminNewsRoute: typeof AdminNewsRoute
+  AdminProgramsRoute: typeof AdminProgramsRoute
+  AdminProjectsRoute: typeof AdminProjectsRoute
+  AdminSubmissionsRoute: typeof AdminSubmissionsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAboutSettingsRoute: AdminAboutSettingsRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminDonationsRoute: AdminDonationsRoute,
+  AdminEventsRoute: AdminEventsRoute,
+  AdminHomeSettingsRoute: AdminHomeSettingsRoute,
+  AdminNewsRoute: AdminNewsRoute,
+  AdminProgramsRoute: AdminProgramsRoute,
+  AdminProjectsRoute: AdminProjectsRoute,
+  AdminSubmissionsRoute: AdminSubmissionsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRouteWithChildren,
   ContactRoute: ContactRoute,
   DonateRoute: DonateRoute,
   EventsRoute: EventsRoute,
   NewsRoute: NewsRoute,
   ProjectsRoute: ProjectsRoute,
   VolunteerRoute: VolunteerRoute,
-  AdminDonationsRoute: AdminDonationsRoute,
-  AdminSubmissionsRoute: AdminSubmissionsRoute,
   ProgramsSlugRoute: ProgramsSlugRoute,
   ProgramsIndexRoute: ProgramsIndexRoute,
 }

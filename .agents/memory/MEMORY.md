@@ -1,0 +1,1 @@
+- [Admin CMS Architecture](admin-cms-architecture.md) — DB tables, auth via AdminContext, Seroval serialization rule, PG DATE gotcha

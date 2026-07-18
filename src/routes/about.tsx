@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { ArrowRight, Target, Eye, Shield, Compass } from "lucide-react";
 import { SiteLayout, PageHero, SectionEyebrow } from "@/components/site-layout";
+import { getPublicSettings, type SiteSettings } from "@/lib/content-fn";
 import heroImg from "@/assets/hero.jpg";
 
 export const Route = createFileRoute("/about")({
@@ -16,12 +18,19 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
+  const [s, setS] = useState<SiteSettings>({});
+
+  useEffect(() => {
+    getPublicSettings().then((r) => setS(r.settings));
+  }, []);
+
   const cards = [
-    { icon: Target, color: "var(--brand-blue)", title: "Our Mission", text: "To empower communities and create sustainable solutions for a better tomorrow." },
-    { icon: Eye, color: "var(--brand-green-dark)", title: "Our Vision", text: "A world where every individual has the opportunity to live a dignified and fulfilling life." },
-    { icon: Shield, color: "var(--brand-orange)", title: "Our Values", text: "Integrity, Transparency, Compassion, Collaboration, and Accountability." },
-    { icon: Compass, color: "var(--brand-purple)", title: "Our Goals", text: "To reduce poverty, promote education, improve health, and protect our planet." },
+    { icon: Target,  color: "var(--brand-blue)",       title: "Our Mission", text: s.mission_text ?? "To empower communities and create sustainable solutions for a better tomorrow." },
+    { icon: Eye,     color: "var(--brand-green-dark)", title: "Our Vision",  text: s.vision_text  ?? "A world where every individual has the opportunity to live a dignified and fulfilling life." },
+    { icon: Shield,  color: "var(--brand-orange)",     title: "Our Values",  text: s.values_text  ?? "Integrity, Transparency, Compassion, Collaboration, and Accountability." },
+    { icon: Compass, color: "var(--brand-purple)",     title: "Our Goals",   text: s.goals_text   ?? "To reduce poverty, promote education, improve health, and protect our planet." },
   ];
+
   return (
     <SiteLayout>
       <PageHero title="About Us" breadcrumb="About" />
@@ -34,10 +43,10 @@ function AboutPage() {
               A Non-Profit Working <span className="text-[var(--brand-green-dark)]">Worldwide</span>
             </h2>
             <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
-              Unique Future Foundation (UFF) is a non-profit, non-governmental organization working in partnership with communities and stakeholders to improve lives through sustainable programs in education, health, environment, and economic empowerment.
+              {s.about_description ?? "Unique Future Foundation (UFF) is a non-profit, non-governmental organization working in partnership with communities and stakeholders to improve lives through sustainable programs in education, health, environment, and economic empowerment."}
             </p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Founded in 2009, our teams are on the ground in more than 25 countries — designing programs with the people they serve, not for them.
+              {s.about_founded ?? "Founded in 2009, our teams are on the ground in more than 25 countries — designing programs with the people they serve, not for them."}
             </p>
             <Link to="/programs" className="mt-8 inline-flex items-center gap-2 rounded bg-[var(--brand-blue)] px-6 py-3 text-sm font-semibold text-white shadow hover:brightness-110 transition">
               Explore Our Programs <ArrowRight className="h-4 w-4" />
