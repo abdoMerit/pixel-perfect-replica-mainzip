@@ -13,7 +13,6 @@ import { Route as VolunteerRouteImport } from './routes/volunteer'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as EventsRouteImport } from './routes/events'
-import { Route as DonateRouteImport } from './routes/donate'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
@@ -28,7 +27,6 @@ import { Route as AdminNewsRouteImport } from './routes/admin.news'
 import { Route as AdminHomeSettingsRouteImport } from './routes/admin.home-settings'
 import { Route as AdminHeroSlidesRouteImport } from './routes/admin.hero-slides'
 import { Route as AdminEventsRouteImport } from './routes/admin.events'
-import { Route as AdminDonationsRouteImport } from './routes/admin.donations'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminContactSettingsRouteImport } from './routes/admin.contact-settings'
 import { Route as AdminAboutSettingsRouteImport } from './routes/admin.about-settings'
@@ -51,11 +49,6 @@ const NewsRoute = NewsRouteImport.update({
 const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DonateRoute = DonateRouteImport.update({
-  id: '/donate',
-  path: '/donate',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -128,11 +121,6 @@ const AdminEventsRoute = AdminEventsRouteImport.update({
   path: '/events',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminDonationsRoute = AdminDonationsRouteImport.update({
-  id: '/donations',
-  path: '/donations',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -154,7 +142,6 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
-  '/donate': typeof DonateRoute
   '/events': typeof EventsRoute
   '/news': typeof NewsRoute
   '/projects': typeof ProjectsRoute
@@ -162,7 +149,6 @@ export interface FileRoutesByFullPath {
   '/admin/about-settings': typeof AdminAboutSettingsRoute
   '/admin/contact-settings': typeof AdminContactSettingsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
-  '/admin/donations': typeof AdminDonationsRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/hero-slides': typeof AdminHeroSlidesRoute
   '/admin/home-settings': typeof AdminHomeSettingsRoute
@@ -178,7 +164,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/donate': typeof DonateRoute
   '/events': typeof EventsRoute
   '/news': typeof NewsRoute
   '/projects': typeof ProjectsRoute
@@ -186,7 +171,6 @@ export interface FileRoutesByTo {
   '/admin/about-settings': typeof AdminAboutSettingsRoute
   '/admin/contact-settings': typeof AdminContactSettingsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
-  '/admin/donations': typeof AdminDonationsRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/hero-slides': typeof AdminHeroSlidesRoute
   '/admin/home-settings': typeof AdminHomeSettingsRoute
@@ -204,7 +188,6 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
-  '/donate': typeof DonateRoute
   '/events': typeof EventsRoute
   '/news': typeof NewsRoute
   '/projects': typeof ProjectsRoute
@@ -212,7 +195,6 @@ export interface FileRoutesById {
   '/admin/about-settings': typeof AdminAboutSettingsRoute
   '/admin/contact-settings': typeof AdminContactSettingsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
-  '/admin/donations': typeof AdminDonationsRoute
   '/admin/events': typeof AdminEventsRoute
   '/admin/hero-slides': typeof AdminHeroSlidesRoute
   '/admin/home-settings': typeof AdminHomeSettingsRoute
@@ -231,7 +213,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/contact'
-    | '/donate'
     | '/events'
     | '/news'
     | '/projects'
@@ -239,7 +220,6 @@ export interface FileRouteTypes {
     | '/admin/about-settings'
     | '/admin/contact-settings'
     | '/admin/dashboard'
-    | '/admin/donations'
     | '/admin/events'
     | '/admin/hero-slides'
     | '/admin/home-settings'
@@ -255,7 +235,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
-    | '/donate'
     | '/events'
     | '/news'
     | '/projects'
@@ -263,7 +242,6 @@ export interface FileRouteTypes {
     | '/admin/about-settings'
     | '/admin/contact-settings'
     | '/admin/dashboard'
-    | '/admin/donations'
     | '/admin/events'
     | '/admin/hero-slides'
     | '/admin/home-settings'
@@ -280,7 +258,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/contact'
-    | '/donate'
     | '/events'
     | '/news'
     | '/projects'
@@ -288,7 +265,6 @@ export interface FileRouteTypes {
     | '/admin/about-settings'
     | '/admin/contact-settings'
     | '/admin/dashboard'
-    | '/admin/donations'
     | '/admin/events'
     | '/admin/hero-slides'
     | '/admin/home-settings'
@@ -306,7 +282,6 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRouteWithChildren
   ContactRoute: typeof ContactRoute
-  DonateRoute: typeof DonateRoute
   EventsRoute: typeof EventsRoute
   NewsRoute: typeof NewsRoute
   ProjectsRoute: typeof ProjectsRoute
@@ -343,13 +318,6 @@ declare module '@tanstack/react-router' {
       path: '/events'
       fullPath: '/events'
       preLoaderRoute: typeof EventsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/donate': {
-      id: '/donate'
-      path: '/donate'
-      fullPath: '/donate'
-      preLoaderRoute: typeof DonateRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -450,13 +418,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEventsRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/donations': {
-      id: '/admin/donations'
-      path: '/donations'
-      fullPath: '/admin/donations'
-      preLoaderRoute: typeof AdminDonationsRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/dashboard': {
       id: '/admin/dashboard'
       path: '/dashboard'
@@ -485,7 +446,6 @@ interface AdminRouteChildren {
   AdminAboutSettingsRoute: typeof AdminAboutSettingsRoute
   AdminContactSettingsRoute: typeof AdminContactSettingsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
-  AdminDonationsRoute: typeof AdminDonationsRoute
   AdminEventsRoute: typeof AdminEventsRoute
   AdminHeroSlidesRoute: typeof AdminHeroSlidesRoute
   AdminHomeSettingsRoute: typeof AdminHomeSettingsRoute
@@ -500,7 +460,6 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAboutSettingsRoute: AdminAboutSettingsRoute,
   AdminContactSettingsRoute: AdminContactSettingsRoute,
   AdminDashboardRoute: AdminDashboardRoute,
-  AdminDonationsRoute: AdminDonationsRoute,
   AdminEventsRoute: AdminEventsRoute,
   AdminHeroSlidesRoute: AdminHeroSlidesRoute,
   AdminHomeSettingsRoute: AdminHomeSettingsRoute,
@@ -518,7 +477,6 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AdminRoute: AdminRouteWithChildren,
   ContactRoute: ContactRoute,
-  DonateRoute: DonateRoute,
   EventsRoute: EventsRoute,
   NewsRoute: NewsRoute,
   ProjectsRoute: ProjectsRoute,

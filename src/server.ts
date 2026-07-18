@@ -2,7 +2,6 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
-import { handleStripeWebhook } from "./lib/stripe-webhook";
 
 const ALLOWED_TYPES: Record<string, string> = {
   "image/jpeg": "jpg",
@@ -85,11 +84,7 @@ function isH3SwallowedErrorBody(body: string): boolean {
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
-    // Handle Stripe webhook before TanStack Start so we get the raw body.
     const url = new URL(request.url);
-    if (request.method === "POST" && url.pathname === "/api/stripe/webhook") {
-      return handleStripeWebhook(request);
-    }
     if (request.method === "POST" && url.pathname === "/api/upload") {
       return handleFileUpload(request);
     }

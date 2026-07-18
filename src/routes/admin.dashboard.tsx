@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
-  Calendar, Newspaper, FolderKanban, MessageSquare, DollarSign, TrendingUp,
+  Calendar, Newspaper, FolderKanban, MessageSquare,
 } from "lucide-react";
 import { useAdmin } from "@/lib/admin-context";
 import { adminGetDashboardStats, type DashboardStats } from "@/lib/content-fn";
@@ -10,10 +10,6 @@ export const Route = createFileRoute("/admin/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — UFF Admin" }] }),
   component: DashboardPage,
 });
-
-function fmt(cents: number) {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(cents / 100);
-}
 
 function StatCard({
   icon: Icon,
@@ -80,8 +76,6 @@ function DashboardPage() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <StatCard icon={MessageSquare} label="Contact Submissions" value={stats.submissionCount} color="bg-[var(--brand-orange)]" />
-            <StatCard icon={DollarSign}    label="Donations Received"  value={stats.donationCount}  color="bg-[var(--brand-green-dark)]" />
-            <StatCard icon={TrendingUp}    label="Total Raised"        value={fmt(stats.totalRaisedCents)} color="bg-[var(--brand-navy)]" />
           </div>
         </>
       ) : (

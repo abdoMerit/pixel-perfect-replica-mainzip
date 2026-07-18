@@ -128,9 +128,6 @@ function ProgramDetail() {
               ))}
             </div>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/donate" className="inline-flex items-center gap-2 rounded bg-[var(--brand-orange)] px-6 py-3 text-sm font-semibold text-white shadow hover:brightness-110 transition">
-                Support This Program <Heart className="h-4 w-4 fill-white" />
-              </Link>
               <Link to="/contact" className="inline-flex items-center gap-2 rounded border border-border px-6 py-3 text-sm font-semibold text-[var(--brand-navy)] hover:border-[var(--brand-green)] transition">
                 Get Involved <ArrowRight className="h-4 w-4" />
               </Link>

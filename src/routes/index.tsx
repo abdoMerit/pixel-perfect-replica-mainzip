@@ -368,9 +368,6 @@ function CTA() {
             </div>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Link to="/donate" className="inline-flex items-center gap-2 rounded bg-[var(--brand-green)] px-5 py-3 text-sm font-semibold shadow hover:brightness-110 transition">
-              Donate Now <Heart className="h-4 w-4 fill-white" />
-            </Link>
             <Link to="/volunteer" className="inline-flex items-center gap-2 rounded border-2 border-[var(--brand-green)] px-5 py-3 text-sm font-semibold hover:bg-[var(--brand-green)] transition">
               Volunteer With Us <Users className="h-4 w-4" />
             </Link>

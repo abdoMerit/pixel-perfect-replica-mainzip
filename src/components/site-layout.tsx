@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import {
   Mail, Phone, Clock, Facebook, Twitter, Linkedin, Instagram, Youtube,
-  Search, Heart, ChevronDown, ArrowRight, Globe, HandHeart, MapPin, ArrowUp, Lock,
+  Search, ChevronDown, ArrowRight, Globe, HandHeart, MapPin, ArrowUp, Lock,
 } from "lucide-react";
 
 export const NAV: { label: string; to: string }[] = [
@@ -75,9 +75,6 @@ function Header() {
         </nav>
         <div className="flex items-center gap-3">
           <button type="button" aria-label="Search" className="grid h-10 w-10 place-items-center rounded border border-border text-[var(--brand-navy)] hover:border-[var(--brand-green)]"><Search className="h-4 w-4" /></button>
-          <Link to="/donate" className="inline-flex items-center gap-2 rounded bg-[var(--brand-orange)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:brightness-110 transition">
-            Donate <Heart className="h-4 w-4 fill-white" />
-          </Link>
         </div>
       </div>
     </header>

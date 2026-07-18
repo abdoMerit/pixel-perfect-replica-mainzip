@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import {
   LogIn, UserPlus, LayoutDashboard, Calendar, Newspaper, FolderKanban,
-  BookOpen, MessageSquare, DollarSign, ChevronRight,
+  BookOpen, MessageSquare, ChevronRight,
   LogOut, Menu, Home, Info, Images, Phone,
 } from "lucide-react";
 import { AdminContext } from "@/lib/admin-context";
@@ -44,7 +44,6 @@ const NAV = [
     label: "Data",
     items: [
       { icon: MessageSquare, label: "Submissions", to: "/admin/submissions" as const },
-      { icon: DollarSign,    label: "Donations",   to: "/admin/donations"   as const },
     ],
   },
 ];

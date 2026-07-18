@@ -72,8 +72,6 @@ export type DashboardStats = {
   newsCount: number;
   projectCount: number;
   submissionCount: number;
-  donationCount: number;
-  totalRaisedCents: number;
 };
 
 // ── Auth helper ───────────────────────────────────────────────────────────────
@@ -471,12 +469,11 @@ export const adminGetDashboardStats = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     requireAdmin(data.token);
     await ensureSchema();
-    const [evts, news, projs, subs, doms] = await Promise.all([
+    const [evts, news, projs, subs] = await Promise.all([
       query(`SELECT COUNT(*) FROM events`),
       query(`SELECT COUNT(*) FROM news_articles`),
       query(`SELECT COUNT(*) FROM projects`),
       query(`SELECT COUNT(*) FROM contact_submissions`),
-      query(`SELECT COUNT(*), COALESCE(SUM(amount_cents),0) AS total FROM donations`),
     ]);
     return {
       stats: {
@@ -484,8 +481,6 @@ export const adminGetDashboardStats = createServerFn({ method: "POST" })
         newsCount: parseInt(news.rows[0].count),
         projectCount: parseInt(projs.rows[0].count),
         submissionCount: parseInt(subs.rows[0].count),
-        donationCount: parseInt(doms.rows[0].count),
-        totalRaisedCents: parseInt(doms.rows[0].total),
       } satisfies DashboardStats,
     };
   });
