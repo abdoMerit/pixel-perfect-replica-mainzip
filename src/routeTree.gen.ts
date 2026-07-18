@@ -19,6 +19,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProgramsIndexRouteImport } from './routes/programs.index'
 import { Route as ProgramsSlugRouteImport } from './routes/programs.$slug'
+import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions'
 
 const VolunteerRoute = VolunteerRouteImport.update({
   id: '/volunteer',
@@ -70,6 +71,11 @@ const ProgramsSlugRoute = ProgramsSlugRouteImport.update({
   path: '/programs/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSubmissionsRoute = AdminSubmissionsRouteImport.update({
+  id: '/admin/submissions',
+  path: '/admin/submissions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -80,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/news': typeof NewsRoute
   '/projects': typeof ProjectsRoute
   '/volunteer': typeof VolunteerRoute
+  '/admin/submissions': typeof AdminSubmissionsRoute
   '/programs/$slug': typeof ProgramsSlugRoute
   '/programs/': typeof ProgramsIndexRoute
 }
@@ -92,6 +99,7 @@ export interface FileRoutesByTo {
   '/news': typeof NewsRoute
   '/projects': typeof ProjectsRoute
   '/volunteer': typeof VolunteerRoute
+  '/admin/submissions': typeof AdminSubmissionsRoute
   '/programs/$slug': typeof ProgramsSlugRoute
   '/programs': typeof ProgramsIndexRoute
 }
@@ -105,6 +113,7 @@ export interface FileRoutesById {
   '/news': typeof NewsRoute
   '/projects': typeof ProjectsRoute
   '/volunteer': typeof VolunteerRoute
+  '/admin/submissions': typeof AdminSubmissionsRoute
   '/programs/$slug': typeof ProgramsSlugRoute
   '/programs/': typeof ProgramsIndexRoute
 }
@@ -119,6 +128,7 @@ export interface FileRouteTypes {
     | '/news'
     | '/projects'
     | '/volunteer'
+    | '/admin/submissions'
     | '/programs/$slug'
     | '/programs/'
   fileRoutesByTo: FileRoutesByTo
@@ -131,6 +141,7 @@ export interface FileRouteTypes {
     | '/news'
     | '/projects'
     | '/volunteer'
+    | '/admin/submissions'
     | '/programs/$slug'
     | '/programs'
   id:
@@ -143,6 +154,7 @@ export interface FileRouteTypes {
     | '/news'
     | '/projects'
     | '/volunteer'
+    | '/admin/submissions'
     | '/programs/$slug'
     | '/programs/'
   fileRoutesById: FileRoutesById
@@ -156,6 +168,7 @@ export interface RootRouteChildren {
   NewsRoute: typeof NewsRoute
   ProjectsRoute: typeof ProjectsRoute
   VolunteerRoute: typeof VolunteerRoute
+  AdminSubmissionsRoute: typeof AdminSubmissionsRoute
   ProgramsSlugRoute: typeof ProgramsSlugRoute
   ProgramsIndexRoute: typeof ProgramsIndexRoute
 }
@@ -232,6 +245,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProgramsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/submissions': {
+      id: '/admin/submissions'
+      path: '/admin/submissions'
+      fullPath: '/admin/submissions'
+      preLoaderRoute: typeof AdminSubmissionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -244,6 +264,7 @@ const rootRouteChildren: RootRouteChildren = {
   NewsRoute: NewsRoute,
   ProjectsRoute: ProjectsRoute,
   VolunteerRoute: VolunteerRoute,
+  AdminSubmissionsRoute: AdminSubmissionsRoute,
   ProgramsSlugRoute: ProgramsSlugRoute,
   ProgramsIndexRoute: ProgramsIndexRoute,
 }
