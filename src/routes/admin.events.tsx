@@ -1,10 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, Calendar, Clock, MapPin, Save, X, Loader2 } from "lucide-react";
+import {
+  Plus, Pencil, Trash2, Calendar, Clock, MapPin, Save, X, Loader2,
+  Images, Upload, Video, Image as ImageIcon,
+} from "lucide-react";
 import { useAdmin } from "@/lib/admin-context";
+import { ImageUpload } from "@/components/image-upload";
 import {
   getPublicEvents, adminCreateEvent, adminUpdateEvent, adminDeleteEvent,
-  type CmsEvent,
+  getEventMedia, adminAddEventMedia, adminDeleteEventMedia,
+  type CmsEvent, type EventMedia,
 } from "@/lib/content-fn";
 
 export const Route = createFileRoute("/admin/events")({
@@ -22,56 +27,45 @@ function EventsAdminPage() {
   const { token } = useAdmin();
   const [events, setEvents] = useState<CmsEvent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [form, setForm] = useState<FormState | null>(null); // null = list view
+  const [form, setForm] = useState<FormState | null>(null);
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Media management: which event's gallery is expanded
+  const [mediaEventId, setMediaEventId] = useState<number | null>(null);
 
   async function load() {
     setLoading(true);
-    try {
-      const r = await getPublicEvents();
-      setEvents(r.events);
-    } finally {
-      setLoading(false);
-    }
+    try { const r = await getPublicEvents(); setEvents(r.events); }
+    finally { setLoading(false); }
   }
 
   useEffect(() => { load(); }, []);
 
-  function startNew() { setForm(empty()); setError(null); }
-  function startEdit(e: CmsEvent) { setForm({ ...e }); setError(null); }
+  function startNew() { setForm(empty()); setError(null); setMediaEventId(null); }
+  function startEdit(e: CmsEvent) { setForm({ ...e }); setError(null); setMediaEventId(null); }
   function cancelForm() { setForm(null); setError(null); }
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     if (!form) return;
-    setSaving(true);
-    setError(null);
+    setSaving(true); setError(null);
     try {
       if (form.id) {
         await adminUpdateEvent({ data: { token, ...form, id: form.id, sort_order: form.sort_order ?? 0 } });
       } else {
         await adminCreateEvent({ data: { token, ...form, sort_order: form.sort_order ?? 0 } });
       }
-      setForm(null);
-      await load();
-    } catch {
-      setError("Failed to save. Please try again.");
-    } finally {
-      setSaving(false);
-    }
+      setForm(null); await load();
+    } catch { setError("Failed to save. Please try again."); }
+    finally { setSaving(false); }
   }
 
   async function handleDelete(id: number) {
     if (!confirm("Delete this event?")) return;
     setDeletingId(id);
-    try {
-      await adminDeleteEvent({ data: { token, id } });
-      await load();
-    } finally {
-      setDeletingId(null);
-    }
+    try { await adminDeleteEvent({ data: { token, id } }); await load(); }
+    finally { setDeletingId(null); }
   }
 
   function set(k: keyof FormState, v: string | number) {
@@ -86,10 +80,7 @@ function EventsAdminPage() {
           <p className="mt-1 text-sm text-muted-foreground">{events.length} event{events.length !== 1 ? "s" : ""}</p>
         </div>
         {!form && (
-          <button
-            onClick={startNew}
-            className="inline-flex items-center gap-2 rounded bg-[var(--brand-navy)] px-4 py-2 text-sm font-semibold text-white shadow hover:brightness-110 transition"
-          >
+          <button onClick={startNew} className="inline-flex items-center gap-2 rounded bg-[var(--brand-navy)] px-4 py-2 text-sm font-semibold text-white shadow hover:brightness-110 transition">
             <Plus className="h-4 w-4" /> New Event
           </button>
         )}
@@ -98,9 +89,7 @@ function EventsAdminPage() {
       {/* Form */}
       {form && (
         <div className="mb-6 rounded-lg border border-border bg-white p-6 shadow-sm">
-          <h2 className="mb-4 font-semibold text-[var(--brand-navy)]">
-            {form.id ? "Edit Event" : "New Event"}
-          </h2>
+          <h2 className="mb-4 font-semibold text-[var(--brand-navy)]">{form.id ? "Edit Event" : "New Event"}</h2>
           <form onSubmit={handleSave} className="grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
               <label className="label">Title *</label>
@@ -152,28 +141,180 @@ function EventsAdminPage() {
       ) : (
         <div className="space-y-3">
           {events.map((ev) => (
-            <div key={ev.id} className="flex items-start justify-between gap-4 rounded-lg border border-border bg-white p-4 shadow-sm">
-              <div className="min-w-0 flex-1">
-                <div className="font-semibold text-[var(--brand-navy)] truncate">{ev.title}</div>
-                <div className="mt-1 flex flex-wrap gap-3 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{String(ev.event_date).slice(0, 10)}</span>
-                  {ev.event_time && <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{ev.event_time}</span>}
-                  {ev.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{ev.location}</span>}
+            <div key={ev.id}>
+              <div className="flex items-start justify-between gap-4 rounded-lg border border-border bg-white p-4 shadow-sm">
+                <div className="min-w-0 flex-1">
+                  <div className="font-semibold text-[var(--brand-navy)] truncate">{ev.title}</div>
+                  <div className="mt-1 flex flex-wrap gap-3 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{String(ev.event_date).slice(0, 10)}</span>
+                    {ev.event_time && <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{ev.event_time}</span>}
+                    {ev.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{ev.location}</span>}
+                  </div>
+                  {ev.description && <p className="mt-1.5 text-xs text-muted-foreground line-clamp-2">{ev.description}</p>}
                 </div>
-                {ev.description && <p className="mt-1.5 text-xs text-muted-foreground line-clamp-2">{ev.description}</p>}
+                <div className="flex flex-shrink-0 items-center gap-2">
+                  <button
+                    onClick={() => setMediaEventId(mediaEventId === ev.id ? null : ev.id)}
+                    className={`inline-flex items-center gap-1.5 rounded border px-2.5 py-1.5 text-xs font-semibold transition ${
+                      mediaEventId === ev.id
+                        ? "border-[var(--brand-green)] bg-[var(--brand-green)]/10 text-[var(--brand-green-dark)]"
+                        : "border-border text-muted-foreground hover:border-[var(--brand-green)] hover:text-[var(--brand-green-dark)]"
+                    }`}
+                  >
+                    <Images className="h-3.5 w-3.5" /> Photos
+                  </button>
+                  <button onClick={() => startEdit(ev)} className="grid h-8 w-8 place-items-center rounded border border-border text-muted-foreground hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)] transition">
+                    <Pencil className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(ev.id)}
+                    disabled={deletingId === ev.id}
+                    className="grid h-8 w-8 place-items-center rounded border border-border text-muted-foreground hover:border-red-400 hover:text-red-500 transition disabled:opacity-50"
+                  >
+                    {deletingId === ev.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+                  </button>
+                </div>
               </div>
-              <div className="flex flex-shrink-0 gap-2">
-                <button onClick={() => startEdit(ev)} className="grid h-8 w-8 place-items-center rounded border border-border text-muted-foreground hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)] transition">
-                  <Pencil className="h-3.5 w-3.5" />
-                </button>
-                <button
-                  onClick={() => handleDelete(ev.id)}
-                  disabled={deletingId === ev.id}
-                  className="grid h-8 w-8 place-items-center rounded border border-border text-muted-foreground hover:border-red-400 hover:text-red-500 transition disabled:opacity-50"
-                >
-                  {deletingId === ev.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
-                </button>
-              </div>
+
+              {/* Inline media manager */}
+              {mediaEventId === ev.id && <EventMediaPanel eventId={ev.id} token={token} />}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Event media panel ─────────────────────────────────────────────────────────
+
+function EventMediaPanel({ eventId, token }: { eventId: number; token: string }) {
+  const [media, setMedia] = useState<EventMedia[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [addMode, setAddMode] = useState<"image" | "video" | null>(null);
+  const [newUrl, setNewUrl] = useState("");
+  const [caption, setCaption] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+
+  async function load() {
+    setLoading(true);
+    try { const r = await getEventMedia({ data: { event_id: eventId } }); setMedia(r.media); }
+    finally { setLoading(false); }
+  }
+  useEffect(() => { load(); }, [eventId]);
+
+  async function handleAdd() {
+    if (!newUrl.trim() || !addMode) return;
+    setUploading(true);
+    try {
+      await adminAddEventMedia({ data: { token, event_id: eventId, type: addMode, url: newUrl.trim(), caption: caption.trim(), sort_order: media.length } });
+      setNewUrl(""); setCaption(""); setAddMode(null);
+      await load();
+    } finally { setUploading(false); }
+  }
+
+  async function handleDelete(id: number) {
+    if (!confirm("Remove this media?")) return;
+    setDeletingId(id);
+    try { await adminDeleteEventMedia({ data: { token, id } }); await load(); }
+    finally { setDeletingId(null); }
+  }
+
+  return (
+    <div className="ml-4 rounded-b-lg border border-t-0 border-[var(--brand-green)]/30 bg-slate-50 p-4">
+      <div className="mb-3 flex items-center justify-between">
+        <span className="text-xs font-bold uppercase tracking-wider text-[var(--brand-green-dark)]">Event Photos & Videos</span>
+        <div className="flex gap-2">
+          <button
+            onClick={() => { setAddMode(addMode === "image" ? null : "image"); setNewUrl(""); setCaption(""); }}
+            className="inline-flex items-center gap-1.5 rounded border border-border bg-white px-2.5 py-1 text-xs font-semibold text-[var(--brand-navy)] hover:border-[var(--brand-blue)] transition"
+          >
+            <ImageIcon className="h-3 w-3" /> Add Photo
+          </button>
+          <button
+            onClick={() => { setAddMode(addMode === "video" ? null : "video"); setNewUrl(""); setCaption(""); }}
+            className="inline-flex items-center gap-1.5 rounded border border-border bg-white px-2.5 py-1 text-xs font-semibold text-[var(--brand-navy)] hover:border-[var(--brand-blue)] transition"
+          >
+            <Video className="h-3 w-3" /> Add Video
+          </button>
+        </div>
+      </div>
+
+      {/* Add form */}
+      {addMode && (
+        <div className="mb-4 rounded-lg border border-border bg-white p-4 space-y-3">
+          {addMode === "image" ? (
+            <ImageUpload
+              label="Photo"
+              value={newUrl}
+              onChange={setNewUrl}
+              accept="image/*"
+              hint="Upload a photo from this event."
+            />
+          ) : (
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold text-[var(--brand-navy)]">Video URL (YouTube, Vimeo, or direct MP4)</label>
+              <input
+                className="w-full rounded border border-border bg-white px-3 py-2 text-sm outline-none focus:border-[var(--brand-green)]"
+                value={newUrl}
+                onChange={(e) => setNewUrl(e.target.value)}
+                placeholder="https://youtube.com/watch?v=..."
+              />
+            </div>
+          )}
+          <div>
+            <label className="mb-1.5 block text-xs font-semibold text-[var(--brand-navy)]">Caption (optional)</label>
+            <input
+              className="w-full rounded border border-border bg-white px-3 py-2 text-sm outline-none focus:border-[var(--brand-green)]"
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+              placeholder="Short description…"
+            />
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={handleAdd}
+              disabled={uploading || !newUrl.trim()}
+              className="inline-flex items-center gap-2 rounded bg-[var(--brand-green)] px-3 py-1.5 text-xs font-semibold text-white hover:brightness-110 transition disabled:opacity-50"
+            >
+              {uploading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Upload className="h-3 w-3" />}
+              {uploading ? "Adding…" : "Add"}
+            </button>
+            <button onClick={() => setAddMode(null)} className="rounded border border-border px-3 py-1.5 text-xs text-muted-foreground hover:bg-slate-50 transition">Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* Media grid */}
+      {loading ? (
+        <div className="flex gap-3">
+          {[1, 2, 3].map((i) => <div key={i} className="h-24 w-32 animate-pulse rounded-lg bg-white border border-border" />)}
+        </div>
+      ) : media.length === 0 ? (
+        <p className="py-4 text-center text-xs text-muted-foreground">No photos or videos yet. Add some above.</p>
+      ) : (
+        <div className="flex flex-wrap gap-3">
+          {media.map((m) => (
+            <div key={m.id} className="group relative">
+              {m.type === "image" ? (
+                <img src={m.url} alt={m.caption} className="h-24 w-32 rounded-lg object-cover border border-border" />
+              ) : (
+                <div className="flex h-24 w-32 items-center justify-center rounded-lg border border-border bg-slate-200">
+                  <Video className="h-6 w-6 text-muted-foreground" />
+                  <span className="ml-1 text-xs text-muted-foreground">Video</span>
+                </div>
+              )}
+              {m.caption && (
+                <div className="mt-1 max-w-[128px] truncate text-[10px] text-muted-foreground">{m.caption}</div>
+              )}
+              <button
+                onClick={() => handleDelete(m.id)}
+                disabled={deletingId === m.id}
+                className="absolute -right-1.5 -top-1.5 hidden h-5 w-5 place-items-center rounded-full bg-red-500 text-white shadow group-hover:grid disabled:opacity-50"
+              >
+                {deletingId === m.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <X className="h-3 w-3" />}
+              </button>
             </div>
           ))}
         </div>

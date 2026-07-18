@@ -2,8 +2,8 @@ import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import {
   LogIn, UserPlus, LayoutDashboard, Calendar, Newspaper, FolderKanban,
-  BookOpen, Settings2, MessageSquare, DollarSign, ChevronRight,
-  LogOut, Menu, Home, Info, User,
+  BookOpen, MessageSquare, DollarSign, ChevronRight,
+  LogOut, Menu, Home, Info, Images, Phone,
 } from "lucide-react";
 import { AdminContext } from "@/lib/admin-context";
 import { staffLogin, staffRegister } from "@/lib/auth-fn";
@@ -31,6 +31,13 @@ const NAV = [
     items: [
       { icon: Home, label: "Home Page",  to: "/admin/home-settings"  as const },
       { icon: Info, label: "About Page", to: "/admin/about-settings" as const },
+    ],
+  },
+  {
+    label: "Media",
+    items: [
+      { icon: Images, label: "Hero Slides",   to: "/admin/hero-slides"       as const },
+      { icon: Phone,  label: "Contact & Info", to: "/admin/contact-settings" as const },
     ],
   },
   {

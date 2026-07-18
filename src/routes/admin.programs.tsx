@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Save, Loader2, Plus, Trash2 } from "lucide-react";
 import { useAdmin } from "@/lib/admin-context";
+import { ImageUpload } from "@/components/image-upload";
 import { getPublicPrograms, adminUpdateProgram, type ProgramData } from "@/lib/content-fn";
 
 export const Route = createFileRoute("/admin/programs")({
@@ -41,12 +42,10 @@ function ProgramsAdminPage() {
     setField(slug, "highlights", h);
   }
   function addHighlight(slug: string) {
-    const h = [...(forms[slug]?.highlights ?? []), { title: "", text: "" }];
-    setField(slug, "highlights", h);
+    setField(slug, "highlights", [...(forms[slug]?.highlights ?? []), { title: "", text: "" }]);
   }
   function removeHighlight(slug: string, idx: number) {
-    const h = (forms[slug]?.highlights ?? []).filter((_, i) => i !== idx);
-    setField(slug, "highlights", h);
+    setField(slug, "highlights", (forms[slug]?.highlights ?? []).filter((_, i) => i !== idx));
   }
 
   function updateStat(slug: string, idx: number, key: "n" | "l", val: string) {
@@ -55,19 +54,16 @@ function ProgramsAdminPage() {
     setField(slug, "stats", s);
   }
   function addStat(slug: string) {
-    const s = [...(forms[slug]?.stats ?? []), { n: "", l: "" }];
-    setField(slug, "stats", s);
+    setField(slug, "stats", [...(forms[slug]?.stats ?? []), { n: "", l: "" }]);
   }
   function removeStat(slug: string, idx: number) {
-    const s = (forms[slug]?.stats ?? []).filter((_, i) => i !== idx);
-    setField(slug, "stats", s);
+    setField(slug, "stats", (forms[slug]?.stats ?? []).filter((_, i) => i !== idx));
   }
 
   async function handleSave(slug: string) {
     const f = forms[slug];
     if (!f) return;
-    setSaving(slug);
-    setError(null);
+    setSaving(slug); setError(null);
     try {
       await adminUpdateProgram({ data: { token, ...f } });
       setSaved(slug);
@@ -82,7 +78,7 @@ function ProgramsAdminPage() {
   if (loading) {
     return (
       <div className="space-y-4">
-        {[1,2,3,4].map((i) => <div key={i} className="h-16 animate-pulse rounded-lg bg-white border border-border" />)}
+        {[1, 2, 3, 4].map((i) => <div key={i} className="h-16 animate-pulse rounded-lg bg-white border border-border" />)}
       </div>
     );
   }
@@ -91,7 +87,7 @@ function ProgramsAdminPage() {
     <div>
       <div className="mb-6">
         <h1 className="font-display text-2xl font-extrabold text-[var(--brand-navy)]">Programs</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Edit the content for each of the four program areas.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Edit content, images, stats and highlights for each program.</p>
       </div>
 
       {/* Tab pills */}
@@ -131,6 +127,39 @@ function ProgramsAdminPage() {
                 <div className="sm:col-span-2">
                   <label className="label">Summary</label>
                   <textarea className="input min-h-[100px] resize-y" value={f.summary ?? ""} onChange={(e) => setField(p.slug, "summary", e.target.value)} />
+                </div>
+              </div>
+            </div>
+
+            {/* Program Media */}
+            <div className="rounded-lg border border-border bg-white p-6 shadow-sm">
+              <h2 className="mb-5 font-semibold text-[var(--brand-navy)]">Program Media</h2>
+              <div className="grid gap-6 sm:grid-cols-2">
+                <ImageUpload
+                  label="Program Image"
+                  value={f.image_url ?? ""}
+                  onChange={(url) => setField(p.slug, "image_url", url)}
+                  accept="image/*"
+                  hint="Main photo shown on the program detail page."
+                />
+                <div className="space-y-2">
+                  <label className="mb-1.5 block text-xs font-semibold text-[var(--brand-navy)]">Program Video URL</label>
+                  <input
+                    className="input"
+                    value={f.video_url ?? ""}
+                    onChange={(e) => setField(p.slug, "video_url", e.target.value)}
+                    placeholder="https://youtube.com/watch?v=..."
+                  />
+                  {f.video_url && (
+                    <div className="mt-2 aspect-video w-full overflow-hidden rounded-lg border border-border bg-black">
+                      <iframe
+                        src={f.video_url.replace("watch?v=", "embed/")}
+                        className="h-full w-full"
+                        allowFullScreen
+                      />
+                    </div>
+                  )}
+                  <p className="text-[11px] text-muted-foreground">Paste a YouTube or Vimeo link.</p>
                 </div>
               </div>
             </div>

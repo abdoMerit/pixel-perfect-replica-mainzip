@@ -4,6 +4,38 @@ import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { handleStripeWebhook } from "./lib/stripe-webhook";
 
+async function handleFileUpload(request: Request): Promise<Response> {
+  try {
+    const formData = await request.formData();
+    const file = formData.get("file") as File | null;
+    if (!file) return Response.json({ error: "No file provided" }, { status: 400 });
+
+    const ALLOWED = [
+      "image/jpeg", "image/png", "image/webp", "image/gif",
+      "video/mp4", "video/webm", "video/ogg",
+    ];
+    if (!ALLOWED.includes(file.type)) {
+      return Response.json({ error: `File type "${file.type}" is not allowed` }, { status: 400 });
+    }
+    if (file.size > 50 * 1024 * 1024) {
+      return Response.json({ error: "File too large (max 50 MB)" }, { status: 400 });
+    }
+
+    const ext = file.name.split(".").pop()?.toLowerCase() ?? "bin";
+    const safeName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const dir = "public/media";
+
+    const fs = await import("node:fs/promises");
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(`${dir}/${safeName}`, Buffer.from(await file.arrayBuffer()));
+
+    return Response.json({ url: `/media/${safeName}` });
+  } catch (err) {
+    console.error("[upload]", err);
+    return Response.json({ error: "Upload failed" }, { status: 500 });
+  }
+}
+
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
 };
@@ -51,6 +83,9 @@ export default {
     const url = new URL(request.url);
     if (request.method === "POST" && url.pathname === "/api/stripe/webhook") {
       return handleStripeWebhook(request);
+    }
+    if (request.method === "POST" && url.pathname === "/api/upload") {
+      return handleFileUpload(request);
     }
 
     try {

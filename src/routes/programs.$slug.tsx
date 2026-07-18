@@ -10,6 +10,8 @@ type LoaderData = {
   title: string;
   tagline: string | null;
   summary: string | null;
+  image_url: string;
+  video_url: string;
   highlights: { title: string; text: string }[];
   stats: { n: string; l: string }[];
 };
@@ -24,6 +26,8 @@ export const Route = createFileRoute("/programs/$slug")({
         title: r.program.title,
         tagline: r.program.tagline ?? null,
         summary: r.program.summary ?? null,
+        image_url: r.program.image_url ?? "",
+        video_url: r.program.video_url ?? "",
         highlights: Array.isArray(r.program.highlights) ? r.program.highlights : [],
         stats: Array.isArray(r.program.stats) ? r.program.stats : [],
       };
@@ -36,6 +40,8 @@ export const Route = createFileRoute("/programs/$slug")({
       title: p.title,
       tagline: p.tagline,
       summary: p.summary,
+      image_url: "",
+      video_url: "",
       highlights: p.highlights,
       stats: p.stats,
     };
@@ -76,10 +82,10 @@ export const Route = createFileRoute("/programs/$slug")({
 function ProgramDetail() {
   const data = Route.useLoaderData();
 
-  // Look up non-serializable assets (icon, image, color) from static file
+  // Look up non-serializable assets (icon, color) from static file; prefer DB image
   const staticProg = PROGRAMS.find((p) => p.slug === data.slug);
-  const Icon = staticProg?.icon ?? (() => null);
-  const img = staticProg?.img;
+  const Icon  = staticProg?.icon ?? (() => null);
+  const img   = data.image_url || staticProg?.img || "";
   const color = staticProg?.color ?? "var(--brand-green-dark)";
 
   const others = PROGRAMS.filter((p) => p.slug !== data.slug);
@@ -89,7 +95,21 @@ function ProgramDetail() {
       <PageHero title={data.title} breadcrumb={data.title} />
       <section className="py-20">
         <div className="mx-auto grid max-w-7xl gap-12 px-4 lg:grid-cols-[1.1fr_1fr]">
-          {img && <img src={img} alt={data.title} className="w-full rounded-lg object-cover shadow-md" loading="lazy" />}
+          {img && (
+            <div className="space-y-4">
+              <img src={img} alt={data.title} className="w-full rounded-lg object-cover shadow-md" loading="lazy" />
+              {data.video_url && (
+                <div className="aspect-video w-full overflow-hidden rounded-lg border border-border shadow-md">
+                  <iframe
+                    src={data.video_url.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")}
+                    className="h-full w-full"
+                    allowFullScreen
+                    loading="lazy"
+                  />
+                </div>
+              )}
+            </div>
+          )}
           <div>
             <div className="flex items-center gap-3">
               <div className="grid h-12 w-12 place-items-center rounded-full" style={{ backgroundColor: color }}>

@@ -109,6 +109,32 @@ export async function ensureSchema(): Promise<void> {
       created_at    TIMESTAMPTZ DEFAULT NOW()
     )
   `);
+  await query(`
+    CREATE TABLE IF NOT EXISTS hero_slides (
+      id         SERIAL PRIMARY KEY,
+      image_url  TEXT NOT NULL DEFAULT '',
+      headline   TEXT DEFAULT '',
+      subtext    TEXT DEFAULT '',
+      badge_text TEXT DEFAULT '',
+      cta_label  TEXT DEFAULT '',
+      cta_to     TEXT DEFAULT '',
+      sort_order INTEGER DEFAULT 0,
+      active     BOOLEAN DEFAULT TRUE
+    )
+  `);
+  await query(`
+    CREATE TABLE IF NOT EXISTS event_media (
+      id         SERIAL PRIMARY KEY,
+      event_id   INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+      type       TEXT NOT NULL DEFAULT 'image',
+      url        TEXT NOT NULL,
+      caption    TEXT DEFAULT '',
+      sort_order INTEGER DEFAULT 0
+    )
+  `);
+  // Extend programs with media columns (safe to run repeatedly)
+  await query(`ALTER TABLE programs ADD COLUMN IF NOT EXISTS image_url TEXT DEFAULT ''`);
+  await query(`ALTER TABLE programs ADD COLUMN IF NOT EXISTS video_url TEXT DEFAULT ''`);
 
   // ── Seed site_settings ───────────────────────────────────────────────
   const defaults: [string, string][] = [
@@ -131,6 +157,18 @@ export async function ensureSchema(): Promise<void> {
     ["vision_text", "A world where every individual has the opportunity to live a dignified and fulfilling life."],
     ["values_text", "Integrity, Transparency, Compassion, Collaboration, and Accountability."],
     ["goals_text", "To reduce poverty, promote education, improve health, and protect our planet."],
+    // Contact info
+    ["contact_phone", "+252 90 730 3587"],
+    ["contact_email", "info@uniquefuturefoundation.org"],
+    ["contact_address", "Mogadishu, Somalia"],
+    ["contact_hours", "Mon - Fri: 8:00AM - 5:00PM"],
+    // Social media links
+    ["social_facebook",  "https://facebook.com"],
+    ["social_instagram", "https://instagram.com"],
+    ["social_twitter",   "https://twitter.com"],
+    ["social_youtube",   "https://youtube.com"],
+    // Google Maps embed URL (optional)
+    ["contact_map_embed", ""],
   ];
   for (const [k, v] of defaults) {
     await query(

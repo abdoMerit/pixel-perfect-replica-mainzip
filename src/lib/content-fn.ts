@@ -40,8 +40,31 @@ export type ProgramData = {
   title: string;
   tagline: string | null;
   summary: string | null;
+  image_url: string;
+  video_url: string;
   highlights: { title: string; text: string }[];
   stats: { n: string; l: string }[];
+};
+
+export type HeroSlide = {
+  id: number;
+  image_url: string;
+  headline: string;
+  subtext: string;
+  badge_text: string;
+  cta_label: string;
+  cta_to: string;
+  sort_order: number;
+  active: boolean;
+};
+
+export type EventMedia = {
+  id: number;
+  event_id: number;
+  type: "image" | "video";
+  url: string;
+  caption: string;
+  sort_order: number;
 };
 
 export type DashboardStats = {
@@ -277,7 +300,7 @@ export const getPublicProgram = createServerFn({ method: "GET" })
 export const getPublicPrograms = createServerFn({ method: "GET" })
   .handler(async () => {
     await ensureSchema();
-    const r = await query(`SELECT * FROM programs ORDER BY slug`);
+    const r = await query(`SELECT slug,title,tagline,summary,image_url,video_url,highlights,stats FROM programs ORDER BY slug`);
     return { programs: r.rows as ProgramData[] };
   });
 
@@ -294,6 +317,8 @@ export const adminUpdateProgram = createServerFn({ method: "POST" })
       title: z.string().min(1),
       tagline: z.string().optional(),
       summary: z.string().optional(),
+      image_url: z.string().optional(),
+      video_url: z.string().optional(),
       highlights: z.array(HighlightSchema).optional(),
       stats: z.array(StatSchema).optional(),
     }).parse(d),
@@ -302,16 +327,140 @@ export const adminUpdateProgram = createServerFn({ method: "POST" })
     requireAdmin(data.token);
     await ensureSchema();
     await query(
-      `UPDATE programs SET title=$1, tagline=$2, summary=$3, highlights=$4::jsonb, stats=$5::jsonb WHERE slug=$6`,
+      `UPDATE programs SET title=$1,tagline=$2,summary=$3,image_url=$4,video_url=$5,highlights=$6::jsonb,stats=$7::jsonb WHERE slug=$8`,
       [
         data.title,
         data.tagline ?? null,
         data.summary ?? null,
+        data.image_url ?? "",
+        data.video_url ?? "",
         JSON.stringify(data.highlights ?? []),
         JSON.stringify(data.stats ?? []),
         data.slug,
       ],
     );
+    return { ok: true };
+  });
+
+// ── Hero Slides ───────────────────────────────────────────────────────────────
+
+export const getPublicHeroSlides = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await ensureSchema();
+    const r = await query(`SELECT * FROM hero_slides WHERE active=TRUE ORDER BY sort_order, id`);
+    return { slides: r.rows as HeroSlide[] };
+  });
+
+export const adminGetHeroSlides = createServerFn({ method: "POST" })
+  .validator((d: unknown) => AuthSchema.parse(d))
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    const r = await query(`SELECT * FROM hero_slides ORDER BY sort_order, id`);
+    return { slides: r.rows as HeroSlide[] };
+  });
+
+export const adminCreateSlide = createServerFn({ method: "POST" })
+  .validator((d: unknown) =>
+    z.object({
+      token: z.string(),
+      image_url: z.string(),
+      headline: z.string().optional(),
+      subtext: z.string().optional(),
+      badge_text: z.string().optional(),
+      cta_label: z.string().optional(),
+      cta_to: z.string().optional(),
+      sort_order: z.number().optional(),
+      active: z.boolean().optional(),
+    }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    const r = await query(
+      `INSERT INTO hero_slides (image_url,headline,subtext,badge_text,cta_label,cta_to,sort_order,active)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
+      [data.image_url, data.headline ?? "", data.subtext ?? "", data.badge_text ?? "",
+       data.cta_label ?? "", data.cta_to ?? "", data.sort_order ?? 0, data.active ?? true],
+    );
+    return { slide: r.rows[0] as HeroSlide };
+  });
+
+export const adminUpdateSlide = createServerFn({ method: "POST" })
+  .validator((d: unknown) =>
+    z.object({
+      token: z.string(),
+      id: z.number(),
+      image_url: z.string(),
+      headline: z.string().optional(),
+      subtext: z.string().optional(),
+      badge_text: z.string().optional(),
+      cta_label: z.string().optional(),
+      cta_to: z.string().optional(),
+      sort_order: z.number().optional(),
+      active: z.boolean().optional(),
+    }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    await query(
+      `UPDATE hero_slides SET image_url=$1,headline=$2,subtext=$3,badge_text=$4,cta_label=$5,cta_to=$6,sort_order=$7,active=$8 WHERE id=$9`,
+      [data.image_url, data.headline ?? "", data.subtext ?? "", data.badge_text ?? "",
+       data.cta_label ?? "", data.cta_to ?? "", data.sort_order ?? 0, data.active ?? true, data.id],
+    );
+    return { ok: true };
+  });
+
+export const adminDeleteSlide = createServerFn({ method: "POST" })
+  .validator((d: unknown) => z.object({ token: z.string(), id: z.number() }).parse(d))
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    await query(`DELETE FROM hero_slides WHERE id=$1`, [data.id]);
+    return { ok: true };
+  });
+
+// ── Event Media ───────────────────────────────────────────────────────────────
+
+export const getEventMedia = createServerFn({ method: "POST" })
+  .validator((d: unknown) => z.object({ event_id: z.number() }).parse(d))
+  .handler(async ({ data }) => {
+    await ensureSchema();
+    const r = await query(
+      `SELECT * FROM event_media WHERE event_id=$1 ORDER BY sort_order, id`,
+      [data.event_id],
+    );
+    return { media: r.rows as EventMedia[] };
+  });
+
+export const adminAddEventMedia = createServerFn({ method: "POST" })
+  .validator((d: unknown) =>
+    z.object({
+      token: z.string(),
+      event_id: z.number(),
+      type: z.enum(["image", "video"]),
+      url: z.string().min(1),
+      caption: z.string().optional(),
+      sort_order: z.number().optional(),
+    }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    const r = await query(
+      `INSERT INTO event_media (event_id,type,url,caption,sort_order) VALUES ($1,$2,$3,$4,$5) RETURNING *`,
+      [data.event_id, data.type, data.url, data.caption ?? "", data.sort_order ?? 0],
+    );
+    return { media: r.rows[0] as EventMedia };
+  });
+
+export const adminDeleteEventMedia = createServerFn({ method: "POST" })
+  .validator((d: unknown) => z.object({ token: z.string(), id: z.number() }).parse(d))
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    await query(`DELETE FROM event_media WHERE id=$1`, [data.id]);
     return { ok: true };
   });
 

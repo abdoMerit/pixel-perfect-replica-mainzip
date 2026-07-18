@@ -26,9 +26,11 @@ import { Route as AdminProjectsRouteImport } from './routes/admin.projects'
 import { Route as AdminProgramsRouteImport } from './routes/admin.programs'
 import { Route as AdminNewsRouteImport } from './routes/admin.news'
 import { Route as AdminHomeSettingsRouteImport } from './routes/admin.home-settings'
+import { Route as AdminHeroSlidesRouteImport } from './routes/admin.hero-slides'
 import { Route as AdminEventsRouteImport } from './routes/admin.events'
 import { Route as AdminDonationsRouteImport } from './routes/admin.donations'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminContactSettingsRouteImport } from './routes/admin.contact-settings'
 import { Route as AdminAboutSettingsRouteImport } from './routes/admin.about-settings'
 
 const VolunteerRoute = VolunteerRouteImport.update({
@@ -116,6 +118,11 @@ const AdminHomeSettingsRoute = AdminHomeSettingsRouteImport.update({
   path: '/home-settings',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminHeroSlidesRoute = AdminHeroSlidesRouteImport.update({
+  id: '/hero-slides',
+  path: '/hero-slides',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminEventsRoute = AdminEventsRouteImport.update({
   id: '/events',
   path: '/events',
@@ -129,6 +136,11 @@ const AdminDonationsRoute = AdminDonationsRouteImport.update({
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContactSettingsRoute = AdminContactSettingsRouteImport.update({
+  id: '/contact-settings',
+  path: '/contact-settings',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAboutSettingsRoute = AdminAboutSettingsRouteImport.update({
@@ -148,9 +160,11 @@ export interface FileRoutesByFullPath {
   '/projects': typeof ProjectsRoute
   '/volunteer': typeof VolunteerRoute
   '/admin/about-settings': typeof AdminAboutSettingsRoute
+  '/admin/contact-settings': typeof AdminContactSettingsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/donations': typeof AdminDonationsRoute
   '/admin/events': typeof AdminEventsRoute
+  '/admin/hero-slides': typeof AdminHeroSlidesRoute
   '/admin/home-settings': typeof AdminHomeSettingsRoute
   '/admin/news': typeof AdminNewsRoute
   '/admin/programs': typeof AdminProgramsRoute
@@ -170,9 +184,11 @@ export interface FileRoutesByTo {
   '/projects': typeof ProjectsRoute
   '/volunteer': typeof VolunteerRoute
   '/admin/about-settings': typeof AdminAboutSettingsRoute
+  '/admin/contact-settings': typeof AdminContactSettingsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/donations': typeof AdminDonationsRoute
   '/admin/events': typeof AdminEventsRoute
+  '/admin/hero-slides': typeof AdminHeroSlidesRoute
   '/admin/home-settings': typeof AdminHomeSettingsRoute
   '/admin/news': typeof AdminNewsRoute
   '/admin/programs': typeof AdminProgramsRoute
@@ -194,9 +210,11 @@ export interface FileRoutesById {
   '/projects': typeof ProjectsRoute
   '/volunteer': typeof VolunteerRoute
   '/admin/about-settings': typeof AdminAboutSettingsRoute
+  '/admin/contact-settings': typeof AdminContactSettingsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/donations': typeof AdminDonationsRoute
   '/admin/events': typeof AdminEventsRoute
+  '/admin/hero-slides': typeof AdminHeroSlidesRoute
   '/admin/home-settings': typeof AdminHomeSettingsRoute
   '/admin/news': typeof AdminNewsRoute
   '/admin/programs': typeof AdminProgramsRoute
@@ -219,9 +237,11 @@ export interface FileRouteTypes {
     | '/projects'
     | '/volunteer'
     | '/admin/about-settings'
+    | '/admin/contact-settings'
     | '/admin/dashboard'
     | '/admin/donations'
     | '/admin/events'
+    | '/admin/hero-slides'
     | '/admin/home-settings'
     | '/admin/news'
     | '/admin/programs'
@@ -241,9 +261,11 @@ export interface FileRouteTypes {
     | '/projects'
     | '/volunteer'
     | '/admin/about-settings'
+    | '/admin/contact-settings'
     | '/admin/dashboard'
     | '/admin/donations'
     | '/admin/events'
+    | '/admin/hero-slides'
     | '/admin/home-settings'
     | '/admin/news'
     | '/admin/programs'
@@ -264,9 +286,11 @@ export interface FileRouteTypes {
     | '/projects'
     | '/volunteer'
     | '/admin/about-settings'
+    | '/admin/contact-settings'
     | '/admin/dashboard'
     | '/admin/donations'
     | '/admin/events'
+    | '/admin/hero-slides'
     | '/admin/home-settings'
     | '/admin/news'
     | '/admin/programs'
@@ -412,6 +436,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminHomeSettingsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/hero-slides': {
+      id: '/admin/hero-slides'
+      path: '/hero-slides'
+      fullPath: '/admin/hero-slides'
+      preLoaderRoute: typeof AdminHeroSlidesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/events': {
       id: '/admin/events'
       path: '/events'
@@ -433,6 +464,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/contact-settings': {
+      id: '/admin/contact-settings'
+      path: '/contact-settings'
+      fullPath: '/admin/contact-settings'
+      preLoaderRoute: typeof AdminContactSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/about-settings': {
       id: '/admin/about-settings'
       path: '/about-settings'
@@ -445,9 +483,11 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAboutSettingsRoute: typeof AdminAboutSettingsRoute
+  AdminContactSettingsRoute: typeof AdminContactSettingsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminDonationsRoute: typeof AdminDonationsRoute
   AdminEventsRoute: typeof AdminEventsRoute
+  AdminHeroSlidesRoute: typeof AdminHeroSlidesRoute
   AdminHomeSettingsRoute: typeof AdminHomeSettingsRoute
   AdminNewsRoute: typeof AdminNewsRoute
   AdminProgramsRoute: typeof AdminProgramsRoute
@@ -458,9 +498,11 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAboutSettingsRoute: AdminAboutSettingsRoute,
+  AdminContactSettingsRoute: AdminContactSettingsRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminDonationsRoute: AdminDonationsRoute,
   AdminEventsRoute: AdminEventsRoute,
+  AdminHeroSlidesRoute: AdminHeroSlidesRoute,
   AdminHomeSettingsRoute: AdminHomeSettingsRoute,
   AdminNewsRoute: AdminNewsRoute,
   AdminProgramsRoute: AdminProgramsRoute,

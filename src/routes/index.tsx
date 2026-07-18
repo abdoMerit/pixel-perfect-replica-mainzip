@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, useEffect, useCallback } from "react";
 import {
   Heart, ArrowRight, Play, Users, Globe, UserRound,
   Target, Eye, Shield, Compass, Stethoscope,
@@ -6,6 +7,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { SiteLayout, SectionEyebrow } from "@/components/site-layout";
+import { getPublicHeroSlides, type HeroSlide } from "@/lib/content-fn";
 import heroImg from "@/assets/hero.jpg";
 import progEdu from "@/assets/prog-education.jpg";
 import progHealth from "@/assets/prog-health.jpg";
@@ -22,24 +24,81 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+const FALLBACK: HeroSlide = {
+  id: 0,
+  image_url: "",
+  headline: "Building a Better Future for All",
+  subtext: "We work in partnership with local communities to create sustainable solutions that change lives and build a better tomorrow.",
+  badge_text: "Together We Can",
+  cta_label: "Our Programs",
+  cta_to: "/programs",
+  sort_order: 0,
+  active: true,
+};
+
 function Hero() {
+  const [slides, setSlides] = useState<HeroSlide[]>([]);
+  const [current, setCurrent] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    getPublicHeroSlides().then((r) => {
+      if (r.slides.length > 0) setSlides(r.slides);
+    });
+  }, []);
+
+  const advance = useCallback(() => setCurrent((c) => (c + 1) % Math.max(slides.length, 1)), [slides.length]);
+  const back    = useCallback(() => setCurrent((c) => (c - 1 + Math.max(slides.length, 1)) % Math.max(slides.length, 1)), [slides.length]);
+
+  useEffect(() => {
+    if (slides.length <= 1 || paused) return;
+    const t = setInterval(advance, 5500);
+    return () => clearInterval(t);
+  }, [slides.length, paused, advance]);
+
+  const slide   = slides[current] ?? FALLBACK;
+  const imgSrc  = slide.image_url || heroImg;
+  const total   = slides.length;
+
   return (
-    <section className="relative">
+    <section className="relative" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
       <div className="relative h-[620px] w-full overflow-hidden">
-        <img src={heroImg} alt="Smiling children" className="absolute inset-0 h-full w-full object-cover" width={1600} height={900} />
+        {/* Slide images — fade transition */}
+        {slides.length > 0 ? (
+          slides.map((s, i) => (
+            <img
+              key={s.id}
+              src={s.image_url || heroImg}
+              alt={s.headline}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${i === current ? "opacity-100" : "opacity-0"}`}
+            />
+          ))
+        ) : (
+          <img src={heroImg} alt="Smiling children" className="absolute inset-0 h-full w-full object-cover" />
+        )}
+
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
+
+        {/* Content */}
         <div className="relative mx-auto flex h-full max-w-7xl items-center px-4">
           <div className="max-w-xl text-white">
-            <span className="inline-block rounded bg-[var(--brand-green)] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-widest text-white">Together We Can</span>
+            {slide.badge_text && (
+              <span className="inline-block rounded bg-[var(--brand-green)] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-widest text-white">
+                {slide.badge_text}
+              </span>
+            )}
             <h1 className="mt-5 font-display text-5xl md:text-6xl font-extrabold leading-[1.05]">
-              Building a Better<br />Future for All
+              {slide.headline || FALLBACK.headline}
             </h1>
             <p className="mt-5 max-w-md text-base text-white/85">
-              We work in partnership with local communities to create sustainable solutions that change lives and build a better tomorrow.
+              {slide.subtext || FALLBACK.subtext}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/programs" className="inline-flex items-center gap-2 rounded bg-[var(--brand-green)] px-6 py-3 text-sm font-semibold text-white shadow-md hover:brightness-110 transition">
-                Our Programs <ArrowRight className="h-4 w-4" />
+              <Link
+                to={(slide.cta_to || "/programs") as "/programs"}
+                className="inline-flex items-center gap-2 rounded bg-[var(--brand-green)] px-6 py-3 text-sm font-semibold text-white shadow-md hover:brightness-110 transition"
+              >
+                {slide.cta_label || "Our Programs"} <ArrowRight className="h-4 w-4" />
               </Link>
               <a href="https://www.youtube.com" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded bg-white px-6 py-3 text-sm font-semibold text-[var(--brand-navy)] shadow-md hover:bg-[var(--brand-bg-soft)] transition">
                 <span className="grid h-6 w-6 place-items-center rounded-full bg-[var(--brand-navy)]"><Play className="h-3 w-3 fill-white text-white" /></span>
@@ -48,8 +107,43 @@ function Hero() {
             </div>
           </div>
         </div>
+
+        {/* Prev / Next arrows */}
+        {total > 1 && (
+          <>
+            <button
+              onClick={back}
+              className="absolute left-4 top-1/2 -translate-y-1/2 grid h-10 w-10 place-items-center rounded-full bg-black/40 text-white backdrop-blur-sm hover:bg-black/60 transition"
+              aria-label="Previous slide"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              onClick={advance}
+              className="absolute right-4 top-1/2 -translate-y-1/2 grid h-10 w-10 place-items-center rounded-full bg-black/40 text-white backdrop-blur-sm hover:bg-black/60 transition"
+              aria-label="Next slide"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </>
+        )}
+
+        {/* Dot indicators */}
+        {total > 1 && (
+          <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-2">
+            {slides.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrent(i)}
+                className={`rounded-full transition-all duration-300 ${i === current ? "w-6 h-2 bg-white" : "w-2 h-2 bg-white/50"}`}
+                aria-label={`Slide ${i + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
-      {/* stats overlay */}
+
+      {/* Stats overlay */}
       <div className="relative -mt-14 px-4">
         <div className="mx-auto grid max-w-7xl grid-cols-2 md:grid-cols-4 rounded-md bg-[var(--brand-navy)] text-white shadow-xl">
           {[
