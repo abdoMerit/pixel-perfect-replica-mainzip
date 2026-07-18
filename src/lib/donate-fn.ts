@@ -25,7 +25,7 @@ export const createDonationCheckout = createServerFn({ method: "POST" })
             currency: "usd",
             unit_amount: data.amountCents,
             product_data: {
-              name: "Donation to HopeRise",
+              name: "Donation to Unique Future Foundation (UFF)",
               description: `One-time donation from ${data.name}`,
             },
           },
