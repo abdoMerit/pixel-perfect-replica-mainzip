@@ -30,6 +30,11 @@ outputType = "webview"
 localPort = 5000
 externalPort = 80
 
+[deployment]
+deploymentTarget = "autoscale"
+build = ["bash", "-c", "NITRO_PRESET=bun bun run build"]
+run = ["bun", "run", ".output/server/index.mjs"]
+
 [postMerge]
 path = "scripts/post-merge.sh"
 timeoutMs = 60000
