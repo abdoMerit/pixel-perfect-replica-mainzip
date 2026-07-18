@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   LogIn, UserPlus, LayoutDashboard, Calendar, Newspaper, FolderKanban,
   BookOpen, Settings2, MessageSquare, DollarSign, ChevronRight,
@@ -293,17 +293,22 @@ function AuthScreen({
 // ── Admin layout (authenticated) ──────────────────────────────────────────────
 
 function AdminLayoutRoute() {
-  const stored =
-    typeof window !== "undefined"
-      ? {
-          token: sessionStorage.getItem("uff-admin-token") ?? "",
-          email: sessionStorage.getItem("uff-admin-email") ?? "",
-          name:  sessionStorage.getItem("uff-admin-name")  ?? "",
-        }
-      : { token: "", email: "", name: "" };
-
-  const [session, setSession] = useState(stored);
+  // Always start with empty session so server and client render the same
+  // initial HTML (auth screen). After mount, restore from sessionStorage.
+  const [session, setSession] = useState({ token: "", email: "", name: "" });
+  const [hydrated, setHydrated] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("uff-admin-token") ?? "";
+    const email = sessionStorage.getItem("uff-admin-email") ?? "";
+    const name  = sessionStorage.getItem("uff-admin-name")  ?? "";
+    if (token) setSession({ token, email, name });
+    setHydrated(true);
+  }, []);
+
+  // Show nothing until we've checked sessionStorage to avoid flash of auth screen
+  if (!hydrated) return null;
 
   const authed = Boolean(session.token);
 

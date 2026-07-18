@@ -151,7 +151,7 @@ function NewsAdminPage() {
                 <tr key={a.id} className="hover:bg-slate-50/50">
                   <td className="px-4 py-3 font-medium text-[var(--brand-navy)] max-w-[200px] truncate">{a.title}</td>
                   <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
-                    <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{a.published_date}</span>
+                    <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{String(a.published_date).slice(0, 10)}</span>
                   </td>
                   <td className="px-4 py-3 text-xs text-muted-foreground max-w-[220px] truncate">{a.excerpt}</td>
                   <td className="px-4 py-3">

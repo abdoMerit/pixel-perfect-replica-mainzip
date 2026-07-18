@@ -156,7 +156,7 @@ function EventsAdminPage() {
               <div className="min-w-0 flex-1">
                 <div className="font-semibold text-[var(--brand-navy)] truncate">{ev.title}</div>
                 <div className="mt-1 flex flex-wrap gap-3 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{ev.event_date}</span>
+                  <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{String(ev.event_date).slice(0, 10)}</span>
                   {ev.event_time && <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{ev.event_time}</span>}
                   {ev.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{ev.location}</span>}
                 </div>
