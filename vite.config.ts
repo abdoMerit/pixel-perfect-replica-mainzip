@@ -17,6 +17,10 @@ export default defineConfig({
       host: "0.0.0.0",
       port: 5000,
       allowedHosts: true,
+      watch: {
+        // Exclude bun's package cache — it has too many files for the watcher
+        ignored: ["**/.cache/**", "**/node_modules/**"],
+      },
     },
   },
 });
