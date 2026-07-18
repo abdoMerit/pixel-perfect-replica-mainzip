@@ -8,9 +8,9 @@ import news3 from "@/assets/news-3.jpg";
 export const Route = createFileRoute("/news")({
   head: () => ({
     meta: [
-      { title: "News & Updates — HopeRise" },
-      { name: "description", content: "Read the latest news, stories, and updates from HopeRise." },
-      { property: "og:title", content: "News & Updates — HopeRise" },
+      { title: "News & Updates — Unique Future Foundation (UFF)" },
+      { name: "description", content: "Read the latest news, stories, and updates from Unique Future Foundation (UFF)." },
+      { property: "og:title", content: "News & Updates — Unique Future Foundation (UFF)" },
       { property: "og:description", content: "Latest stories from our programs and communities." },
     ],
   }),
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/news")({
 });
 
 const ITEMS = [
-  { img: news1, title: "HopeRise Launches New Education Program for Girls", date: "May 20, 2024", excerpt: "A new scholarship initiative will support 2,000 girls to complete secondary school." },
+  { img: news1, title: "UFF Launches New Education Program for Girls", date: "May 20, 2024", excerpt: "A new scholarship initiative will support 2,000 girls to complete secondary school." },
   { img: news2, title: "Clean Water Initiative Reaches 10,000 Communities", date: "May 15, 2024", excerpt: "Together with local partners, we've drilled hundreds of new wells this year." },
   { img: news3, title: "Annual Report 2023: A Year of Significant Impact", date: "May 10, 2024", excerpt: "Our 2023 annual report highlights progress across all four program areas." },
   { img: news1, title: "Field Story: A New Chapter in Mogadishu", date: "Apr 28, 2024", excerpt: "How one community rebuilt its school with parents, teachers, and neighbors leading the way." },

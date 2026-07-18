@@ -6,9 +6,9 @@ import { PROGRAMS } from "@/data/programs";
 export const Route = createFileRoute("/programs/")({
   head: () => ({
     meta: [
-      { title: "Our Programs — HopeRise" },
-      { name: "description", content: "Explore HopeRise programs in education, health, environment, and livelihood." },
-      { property: "og:title", content: "Our Programs — HopeRise" },
+      { title: "Our Programs — Unique Future Foundation (UFF)" },
+      { name: "description", content: "Explore UFF programs in education, health, environment, and livelihood." },
+      { property: "og:title", content: "Our Programs — Unique Future Foundation (UFF)" },
       { property: "og:description", content: "Programs that create real change in communities worldwide." },
     ],
   }),

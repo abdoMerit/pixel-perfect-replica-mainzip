@@ -18,12 +18,10 @@ export const NAV: { label: string; to: string }[] = [
 export function Logo({ light = false }: { light?: boolean }) {
   return (
     <Link to="/" className="flex items-center gap-2.5">
-      <div className="grid h-10 w-10 place-items-center rounded-full bg-[var(--brand-green)]/15">
-        <HandHeart className="h-6 w-6 text-[var(--brand-green-dark)]" strokeWidth={2.5} />
-      </div>
+      <img src="/uff-icon.png" alt="UFF Logo" className="h-10 w-10 rounded-full object-cover" />
       <div className="leading-tight">
-        <div className={`font-display text-xl font-extrabold ${light ? "text-white" : "text-[var(--brand-navy)]"}`}>HopeRise</div>
-        <div className={`text-[10px] uppercase tracking-widest ${light ? "text-white/70" : "text-muted-foreground"}`}>Empowering Communities</div>
+        <div className={`font-display text-xl font-extrabold ${light ? "text-white" : "text-[var(--brand-navy)]"}`}>Unique Future Foundation</div>
+        <div className={`text-[10px] uppercase tracking-widest ${light ? "text-white/70" : "text-muted-foreground"}`}>UFF</div>
       </div>
     </Link>
   );
@@ -138,7 +136,7 @@ function Footer() {
           <ul className="mt-4 space-y-2.5 text-xs text-white/70">
             <li className="flex gap-2"><MapPin className="h-4 w-4 mt-0.5 text-[var(--brand-green)]" /> KM4, Hodan District<br />Mogadishu, Somalia</li>
             <li className="flex gap-2"><Phone className="h-4 w-4 text-[var(--brand-green)]" /> +252 61 2345678</li>
-            <li className="flex gap-2"><Mail className="h-4 w-4 text-[var(--brand-green)]" /> info@hoprise.org</li>
+            <li className="flex gap-2"><Mail className="h-4 w-4 text-[var(--brand-green)]" /> info@uff.org</li>
             <li className="flex gap-2"><Clock className="h-4 w-4 text-[var(--brand-green)]" /> Mon - Fri: 8AM - 5PM</li>
           </ul>
         </div>
@@ -158,7 +156,7 @@ function Footer() {
       </div>
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4 text-[11px] text-white/60">
-          <div>© 2024 HopeRise Organization. All Rights Reserved.</div>
+          <div>© 2025 Unique Future Foundation (UFF). All Rights Reserved.</div>
           <div className="flex gap-5">
             <Link to="/contact" className="hover:text-white">Terms of Use</Link>
             <Link to="/contact" className="hover:text-white">Privacy Policy</Link>

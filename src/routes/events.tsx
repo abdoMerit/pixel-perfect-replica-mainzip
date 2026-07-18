@@ -5,9 +5,9 @@ import { SiteLayout, PageHero, SectionEyebrow } from "@/components/site-layout";
 export const Route = createFileRoute("/events")({
   head: () => ({
     meta: [
-      { title: "Events — HopeRise" },
-      { name: "description", content: "Join HopeRise events, fundraisers, and community gatherings around the world." },
-      { property: "og:title", content: "Events — HopeRise" },
+      { title: "Events — Unique Future Foundation (UFF)" },
+      { name: "description", content: "Join UFF events, fundraisers, and community gatherings." },
+      { property: "og:title", content: "Events — Unique Future Foundation (UFF)" },
       { property: "og:description", content: "Upcoming events, fundraisers, and community gatherings." },
     ],
   }),

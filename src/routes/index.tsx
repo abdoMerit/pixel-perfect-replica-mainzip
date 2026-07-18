@@ -89,7 +89,7 @@ function About() {
             Working <span className="text-[var(--brand-green-dark)]">Worldwide</span>
           </h2>
           <p className="mt-6 max-w-lg text-sm leading-relaxed text-muted-foreground">
-            HopeRise Organization is a non-profit, non-governmental organization working in partnership with communities and stakeholders to improve lives through sustainable programs in education, health, environment, and economic empowerment.
+            Unique Future Foundation (UFF) is a non-profit, non-governmental organization working in partnership with communities and stakeholders to improve lives through sustainable programs in education, health, environment, and economic empowerment.
           </p>
           <Link to="/about" className="mt-8 inline-flex items-center gap-2 rounded bg-[var(--brand-blue)] px-6 py-3 text-sm font-semibold text-white shadow hover:brightness-110 transition">
             Learn More About Us <ArrowRight className="h-4 w-4" />
@@ -191,7 +191,7 @@ function ProjectsAndNews() {
     { img: projWater, tag: "Environment", tagColor: "var(--brand-orange)", title: "Clean Water Initiative Project", loc: "Kismayo, Somalia" },
   ];
   const news = [
-    { img: news1, title: "HopeRise Launches New Education Program for Girls", date: "May 20, 2024" },
+    { img: news1, title: "UFF Launches New Education Program for Girls", date: "May 20, 2024" },
     { img: news2, title: "Clean Water Initiative Reaches 10,000 Communities", date: "May 15, 2024" },
     { img: news3, title: "Annual Report 2023: A Year of Significant Impact", date: "May 10, 2024" },
   ];

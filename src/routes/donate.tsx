@@ -6,9 +6,9 @@ import { SiteLayout, PageHero, SectionEyebrow } from "@/components/site-layout";
 export const Route = createFileRoute("/donate")({
   head: () => ({
     meta: [
-      { title: "Donate — HopeRise" },
-      { name: "description", content: "Support HopeRise programs worldwide." },
-      { property: "og:title", content: "Donate to HopeRise" },
+      { title: "Donate — Unique Future Foundation (UFF)" },
+      { name: "description", content: "Support Unique Future Foundation (UFF) programs." },
+      { property: "og:title", content: "Donate to Unique Future Foundation (UFF)" },
       { property: "og:description", content: "Your gift funds programs in communities worldwide." },
     ],
   }),

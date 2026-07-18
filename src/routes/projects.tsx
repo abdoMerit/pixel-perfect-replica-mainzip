@@ -11,9 +11,9 @@ import progEnv from "@/assets/prog-environment.jpg";
 export const Route = createFileRoute("/projects")({
   head: () => ({
     meta: [
-      { title: "Our Projects — HopeRise" },
-      { name: "description", content: "See the projects HopeRise is delivering across communities worldwide." },
-      { property: "og:title", content: "Our Projects — HopeRise" },
+      { title: "Our Projects — Unique Future Foundation (UFF)" },
+      { name: "description", content: "See the projects UFF is delivering across communities." },
+      { property: "og:title", content: "Our Projects — Unique Future Foundation (UFF)" },
       { property: "og:description", content: "Schools, clinics, water, and livelihoods — projects with lasting impact." },
     ],
   }),

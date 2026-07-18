@@ -10,13 +10,13 @@ export const Route = createFileRoute("/programs/$slug")({
     return { program };
   },
   head: ({ loaderData }) => {
-    if (!loaderData) return { meta: [{ title: "Program not found — HopeRise" }, { name: "robots", content: "noindex" }] };
+    if (!loaderData) return { meta: [{ title: "Program not found — UFF" }, { name: "robots", content: "noindex" }] };
     const p = loaderData.program;
     return {
       meta: [
-        { title: `${p.title} Program — HopeRise` },
+        { title: `${p.title} Program — UFF` },
         { name: "description", content: p.summary },
-        { property: "og:title", content: `${p.title} — HopeRise` },
+        { property: "og:title", content: `${p.title} — UFF` },
         { property: "og:description", content: p.tagline },
       ],
     };

@@ -6,9 +6,9 @@ import { SiteLayout, PageHero, SectionEyebrow } from "@/components/site-layout";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact Us — HopeRise" },
-      { name: "description", content: "Get in touch with the HopeRise team." },
-      { property: "og:title", content: "Contact HopeRise" },
+      { title: "Contact Us — Unique Future Foundation (UFF)" },
+      { name: "description", content: "Get in touch with the Unique Future Foundation (UFF) team." },
+      { property: "og:title", content: "Contact Unique Future Foundation (UFF)" },
       { property: "og:description", content: "Reach out about partnerships, volunteering, or questions." },
     ],
   }),
@@ -20,7 +20,7 @@ function ContactPage() {
   const items = [
     { icon: MapPin, title: "Our Office", text: "KM4, Hodan District\nMogadishu, Somalia" },
     { icon: Phone, title: "Call Us", text: "+252 61 2345678" },
-    { icon: Mail, title: "Email Us", text: "info@hoprise.org" },
+    { icon: Mail, title: "Email Us", text: "info@uff.org" },
     { icon: Clock, title: "Working Hours", text: "Mon - Fri: 8AM - 5PM" },
   ];
   return (

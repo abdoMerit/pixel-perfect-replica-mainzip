@@ -6,9 +6,9 @@ import heroImg from "@/assets/hero.jpg";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Us — HopeRise" },
-      { name: "description", content: "Learn about HopeRise, our mission, vision, and the values that drive our work with communities worldwide." },
-      { property: "og:title", content: "About HopeRise" },
+      { title: "About Us — Unique Future Foundation (UFF)" },
+      { name: "description", content: "Learn about Unique Future Foundation (UFF), our mission, vision, and the values that drive our work with communities." },
+      { property: "og:title", content: "About Unique Future Foundation (UFF)" },
       { property: "og:description", content: "A non-profit working with communities worldwide to build a better future." },
     ],
   }),
@@ -34,7 +34,7 @@ function AboutPage() {
               A Non-Profit Working <span className="text-[var(--brand-green-dark)]">Worldwide</span>
             </h2>
             <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
-              HopeRise Organization is a non-profit, non-governmental organization working in partnership with communities and stakeholders to improve lives through sustainable programs in education, health, environment, and economic empowerment.
+              Unique Future Foundation (UFF) is a non-profit, non-governmental organization working in partnership with communities and stakeholders to improve lives through sustainable programs in education, health, environment, and economic empowerment.
             </p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Founded in 2009, our teams are on the ground in more than 25 countries — designing programs with the people they serve, not for them.

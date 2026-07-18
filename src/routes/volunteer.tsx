@@ -6,9 +6,9 @@ import { SiteLayout, PageHero, SectionEyebrow } from "@/components/site-layout";
 export const Route = createFileRoute("/volunteer")({
   head: () => ({
     meta: [
-      { title: "Volunteer — HopeRise" },
-      { name: "description", content: "Join HopeRise as a volunteer." },
-      { property: "og:title", content: "Volunteer with HopeRise" },
+      { title: "Volunteer — Unique Future Foundation (UFF)" },
+      { name: "description", content: "Join Unique Future Foundation (UFF) as a volunteer." },
+      { property: "og:title", content: "Volunteer with Unique Future Foundation (UFF)" },
       { property: "og:description", content: "Give your time and skills to communities worldwide." },
     ],
   }),
