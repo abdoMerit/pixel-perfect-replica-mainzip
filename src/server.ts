@@ -1,8 +1,21 @@
 import "./lib/error-capture";
 
+import { Client as ObjectStorage } from "@replit/object-storage";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { handleStripeWebhook } from "./lib/stripe-webhook";
+
+const ALLOWED_TYPES: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png":  "png",
+  "image/webp": "webp",
+  "image/gif":  "gif",
+  "video/mp4":  "mp4",
+  "video/webm": "webm",
+  "video/ogg":  "ogv",
+};
+
+const storage = new ObjectStorage();
 
 async function handleFileUpload(request: Request): Promise<Response> {
   try {
@@ -10,29 +23,50 @@ async function handleFileUpload(request: Request): Promise<Response> {
     const file = formData.get("file") as File | null;
     if (!file) return Response.json({ error: "No file provided" }, { status: 400 });
 
-    const ALLOWED = [
-      "image/jpeg", "image/png", "image/webp", "image/gif",
-      "video/mp4", "video/webm", "video/ogg",
-    ];
-    if (!ALLOWED.includes(file.type)) {
+    if (!(file.type in ALLOWED_TYPES)) {
       return Response.json({ error: `File type "${file.type}" is not allowed` }, { status: 400 });
     }
     if (file.size > 50 * 1024 * 1024) {
       return Response.json({ error: "File too large (max 50 MB)" }, { status: 400 });
     }
 
-    const ext = file.name.split(".").pop()?.toLowerCase() ?? "bin";
-    const safeName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const dir = "public/media";
+    const ext = ALLOWED_TYPES[file.type] ?? file.name.split(".").pop()?.toLowerCase() ?? "bin";
+    const objectName = `media/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-    const fs = await import("node:fs/promises");
-    await fs.mkdir(dir, { recursive: true });
-    await fs.writeFile(`${dir}/${safeName}`, Buffer.from(await file.arrayBuffer()));
+    const result = await storage.uploadFromBytes(objectName, buffer);
+    if (!result.ok) throw new Error(String(result.error));
 
-    return Response.json({ url: `/media/${safeName}` });
+    return Response.json({ url: `/api/media/${objectName.replace("media/", "")}` });
   } catch (err) {
     console.error("[upload]", err);
     return Response.json({ error: "Upload failed" }, { status: 500 });
+  }
+}
+
+async function handleMediaServe(request: Request, objectKey: string): Promise<Response> {
+  try {
+    const result = await storage.downloadAsBytes(`media/${objectKey}`);
+    if (!result.ok) return new Response("Not found", { status: 404 });
+
+    const [buf] = result.value;
+    const ext = objectKey.split(".").pop()?.toLowerCase() ?? "";
+    const mimeMap: Record<string, string> = {
+      jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png",
+      webp: "image/webp", gif: "image/gif",
+      mp4: "video/mp4", webm: "video/webm", ogv: "video/ogg",
+    };
+    const contentType = mimeMap[ext] ?? "application/octet-stream";
+
+    return new Response(buf, {
+      headers: {
+        "Content-Type": contentType,
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
+    });
+  } catch (err) {
+    console.error("[media-serve]", err);
+    return new Response("Error", { status: 500 });
   }
 }
 
@@ -86,6 +120,10 @@ export default {
     }
     if (request.method === "POST" && url.pathname === "/api/upload") {
       return handleFileUpload(request);
+    }
+    if (request.method === "GET" && url.pathname.startsWith("/api/media/")) {
+      const objectKey = url.pathname.slice("/api/media/".length);
+      if (objectKey) return handleMediaServe(request, objectKey);
     }
 
     try {

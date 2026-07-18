@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Plus, Pencil, Trash2, MapPin, Save, X, Loader2, Image, Tag } from "lucide-react";
 import { useAdmin } from "@/lib/admin-context";
+import { ImageUpload } from "@/components/image-upload";
 import {
   getPublicProjects, adminCreateProject, adminUpdateProject, adminDeleteProject,
   type CmsProject,
@@ -122,8 +123,11 @@ function ProjectsAdminPage() {
               </select>
             </div>
             <div className="sm:col-span-2">
-              <label className="label">Image URL</label>
-              <input className="input" placeholder="https://..." value={form.image_url ?? ""} onChange={(e) => set("image_url", e.target.value)} />
+              <ImageUpload
+                label="Project Image"
+                value={form.image_url ?? ""}
+                onChange={(url) => set("image_url", url)}
+              />
             </div>
             <div>
               <label className="label">Sort Order</label>
