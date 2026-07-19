@@ -414,27 +414,17 @@ function TestimonialsSection() {
         </p>
       </div>
 
-      {/* Row 1 — scrolls left */}
-      <div className="relative mb-4">
+      {/* Single row — scrolls left */}
+      <div className="relative">
         <div className="flex gap-4 w-max animate-marquee">
           {row1.map((t, i) => (
             <TestimonialCard key={`r1-${i}`} t={t} idx={i} />
           ))}
         </div>
+        {/* Fade edges */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[var(--brand-navy-deep)] to-transparent z-10" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[var(--brand-navy-deep)] to-transparent z-10" />
       </div>
-
-      {/* Row 2 — scrolls right */}
-      <div className="relative">
-        <div className="flex gap-4 w-max animate-marquee-reverse">
-          {row2.map((t, i) => (
-            <TestimonialCard key={`r2-${i}`} t={t} idx={i + 3} />
-          ))}
-        </div>
-      </div>
-
-      {/* Fade edges */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[var(--brand-navy-deep)] to-transparent" style={{position:'absolute'}} />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[var(--brand-navy-deep)] to-transparent" style={{position:'absolute'}} />
     </section>
   );
 }
