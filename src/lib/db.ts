@@ -141,6 +141,27 @@ export async function ensureSchema(): Promise<void> {
       created_at  TIMESTAMPTZ DEFAULT NOW()
     )
   `);
+  await query(`
+    CREATE TABLE IF NOT EXISTS testimonials (
+      id         SERIAL PRIMARY KEY,
+      name       TEXT NOT NULL,
+      role       TEXT DEFAULT '',
+      quote      TEXT NOT NULL,
+      avatar_url TEXT DEFAULT '',
+      sort_order INTEGER DEFAULT 0,
+      active     BOOLEAN DEFAULT TRUE
+    )
+  `);
+  await query(`
+    CREATE TABLE IF NOT EXISTS partners (
+      id          SERIAL PRIMARY KEY,
+      name        TEXT NOT NULL,
+      logo_url    TEXT DEFAULT '',
+      website_url TEXT DEFAULT '',
+      sort_order  INTEGER DEFAULT 0,
+      active      BOOLEAN DEFAULT TRUE
+    )
+  `);
   // Extend programs with media columns (safe to run repeatedly)
   await query(`ALTER TABLE programs ADD COLUMN IF NOT EXISTS image_url TEXT DEFAULT ''`);
   await query(`ALTER TABLE programs ADD COLUMN IF NOT EXISTS video_url TEXT DEFAULT ''`);

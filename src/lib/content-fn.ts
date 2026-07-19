@@ -632,6 +632,141 @@ export const adminDeleteReport = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// ── Types: testimonials & partners ───────────────────────────────────────────
+
+export type Testimonial = {
+  id: number;
+  name: string;
+  role: string;
+  quote: string;
+  avatar_url: string;
+  sort_order: number;
+  active: boolean;
+};
+
+export type Partner = {
+  id: number;
+  name: string;
+  logo_url: string;
+  website_url: string;
+  sort_order: number;
+  active: boolean;
+};
+
+// ── Public: testimonials ──────────────────────────────────────────────────────
+
+export const getPublicTestimonials = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await ensureSchema();
+    const r = await query(`SELECT * FROM testimonials WHERE active=TRUE ORDER BY sort_order, id`);
+    return { testimonials: r.rows as Testimonial[] };
+  });
+
+// ── Admin: testimonials ───────────────────────────────────────────────────────
+
+export const adminGetTestimonials = createServerFn({ method: "POST" })
+  .validator((d: unknown) => AuthSchema.parse(d))
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    const r = await query(`SELECT * FROM testimonials ORDER BY sort_order, id`);
+    return { testimonials: r.rows as Testimonial[] };
+  });
+
+export const adminCreateTestimonial = createServerFn({ method: "POST" })
+  .validator((d: unknown) =>
+    z.object({ token: z.string(), name: z.string(), role: z.string(), quote: z.string(), avatar_url: z.string(), sort_order: z.number(), active: z.boolean() }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    const r = await query(
+      `INSERT INTO testimonials (name, role, quote, avatar_url, sort_order, active) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
+      [data.name, data.role, data.quote, data.avatar_url, data.sort_order, data.active],
+    );
+    return { testimonial: r.rows[0] as Testimonial };
+  });
+
+export const adminUpdateTestimonial = createServerFn({ method: "POST" })
+  .validator((d: unknown) =>
+    z.object({ token: z.string(), id: z.number(), name: z.string(), role: z.string(), quote: z.string(), avatar_url: z.string(), sort_order: z.number(), active: z.boolean() }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    const r = await query(
+      `UPDATE testimonials SET name=$1, role=$2, quote=$3, avatar_url=$4, sort_order=$5, active=$6 WHERE id=$7 RETURNING *`,
+      [data.name, data.role, data.quote, data.avatar_url, data.sort_order, data.active, data.id],
+    );
+    return { testimonial: r.rows[0] as Testimonial };
+  });
+
+export const adminDeleteTestimonial = createServerFn({ method: "POST" })
+  .validator((d: unknown) => z.object({ token: z.string(), id: z.number() }).parse(d))
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    await query(`DELETE FROM testimonials WHERE id=$1`, [data.id]);
+    return { ok: true };
+  });
+
+// ── Public: partners ──────────────────────────────────────────────────────────
+
+export const getPublicPartners = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await ensureSchema();
+    const r = await query(`SELECT * FROM partners WHERE active=TRUE ORDER BY sort_order, id`);
+    return { partners: r.rows as Partner[] };
+  });
+
+// ── Admin: partners ───────────────────────────────────────────────────────────
+
+export const adminGetPartners = createServerFn({ method: "POST" })
+  .validator((d: unknown) => AuthSchema.parse(d))
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    const r = await query(`SELECT * FROM partners ORDER BY sort_order, id`);
+    return { partners: r.rows as Partner[] };
+  });
+
+export const adminCreatePartner = createServerFn({ method: "POST" })
+  .validator((d: unknown) =>
+    z.object({ token: z.string(), name: z.string(), logo_url: z.string(), website_url: z.string(), sort_order: z.number(), active: z.boolean() }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    const r = await query(
+      `INSERT INTO partners (name, logo_url, website_url, sort_order, active) VALUES ($1,$2,$3,$4,$5) RETURNING *`,
+      [data.name, data.logo_url, data.website_url, data.sort_order, data.active],
+    );
+    return { partner: r.rows[0] as Partner };
+  });
+
+export const adminUpdatePartner = createServerFn({ method: "POST" })
+  .validator((d: unknown) =>
+    z.object({ token: z.string(), id: z.number(), name: z.string(), logo_url: z.string(), website_url: z.string(), sort_order: z.number(), active: z.boolean() }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    const r = await query(
+      `UPDATE partners SET name=$1, logo_url=$2, website_url=$3, sort_order=$4, active=$5 WHERE id=$6 RETURNING *`,
+      [data.name, data.logo_url, data.website_url, data.sort_order, data.active, data.id],
+    );
+    return { partner: r.rows[0] as Partner };
+  });
+
+export const adminDeletePartner = createServerFn({ method: "POST" })
+  .validator((d: unknown) => z.object({ token: z.string(), id: z.number() }).parse(d))
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    await query(`DELETE FROM partners WHERE id=$1`, [data.id]);
+    return { ok: true };
+  });
+
 // ── Admin: dashboard stats ────────────────────────────────────────────────────
 
 export const adminGetDashboardStats = createServerFn({ method: "POST" })

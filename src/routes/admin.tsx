@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import {
   LogIn, LayoutDashboard, Calendar, Newspaper, FolderKanban,
   BookOpen, MessageSquare, ChevronRight, GalleryHorizontal, FileText, Users,
-  LogOut, Menu, Home, Info, Images, Phone,
+  LogOut, Menu, Home, Info, Images, Phone, Quote, Building2,
 } from "lucide-react";
 import { AdminContext } from "@/lib/admin-context";
 import { staffLogin } from "@/lib/auth-fn";
@@ -29,8 +29,10 @@ const NAV = [
   {
     label: "Settings",
     items: [
-      { icon: Home, label: "Home Page",  to: "/admin/home-settings"  as const },
-      { icon: Info, label: "About Page", to: "/admin/about-settings" as const },
+      { icon: Home,  label: "Home Page",     to: "/admin/home-settings"  as const },
+      { icon: Info,  label: "About Page",    to: "/admin/about-settings" as const },
+      { icon: Quote,     label: "Testimonials", to: "/admin/testimonials" as const },
+      { icon: Building2, label: "Partners",     to: "/admin/partners"     as const },
     ],
   },
   {

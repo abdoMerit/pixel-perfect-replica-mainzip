@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import {
   Mail, Phone, Clock, Facebook, Twitter, Linkedin, Instagram, Youtube,
-  Search, ChevronDown, ArrowRight, Globe, HandHeart, MapPin, ArrowUp, Lock,
+  Search, ChevronDown, ArrowRight, Globe, HandHeart, MapPin, ArrowUp,
 } from "lucide-react";
 
 export const NAV: { label: string; to: string }[] = [
@@ -145,18 +145,16 @@ function Footer() {
           </ul>
         </div>
 
-        {/* Staff */}
+        {/* Newsletter placeholder */}
         <div>
-          <h4 className="font-semibold text-white">Staff</h4>
+          <h4 className="font-semibold text-white">Stay Connected</h4>
           <p className="mt-4 text-xs leading-relaxed text-white/70">
-            Are you a member of the UFF team? Access the staff portal to manage website content.
+            Follow our work and get updates on how we're building better futures across communities.
           </p>
-          <Link
-            to="/admin"
-            className="mt-5 inline-flex items-center gap-2 rounded border border-white/20 bg-white/10 px-4 py-2.5 text-xs font-semibold text-white backdrop-blur-sm hover:bg-[var(--brand-green)] hover:border-[var(--brand-green)] transition"
-          >
-            <Lock className="h-3.5 w-3.5" /> Staff Login
-          </Link>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <a href="https://facebook.com" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded border border-white/20 bg-white/10 px-3 py-2 text-xs font-semibold text-white hover:bg-[var(--brand-green)] hover:border-[var(--brand-green)] transition"><Facebook className="h-3.5 w-3.5" /> Facebook</a>
+            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded border border-white/20 bg-white/10 px-3 py-2 text-xs font-semibold text-white hover:bg-[var(--brand-green)] hover:border-[var(--brand-green)] transition"><Instagram className="h-3.5 w-3.5" /> Instagram</a>
+          </div>
         </div>
 
       </div>
@@ -169,9 +167,7 @@ function Footer() {
             <Link to="/contact" className="hover:text-white">Terms of Use</Link>
             <Link to="/contact" className="hover:text-white">Privacy Policy</Link>
             <Link to="/contact" className="hover:text-white">Sitemap</Link>
-            <Link to="/admin" className="flex items-center gap-1 hover:text-[var(--brand-green)]">
-              <Lock className="h-3 w-3" /> Staff Login
-            </Link>
+            <Link to="/admin" className="hover:text-[var(--brand-green)]">Staff Portal</Link>
           </div>
         </div>
       </div>

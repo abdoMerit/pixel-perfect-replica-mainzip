@@ -4,10 +4,10 @@ import {
   Heart, ArrowRight, Play, Users, Globe, UserRound,
   Target, Eye, Shield, Compass, Stethoscope,
   Leaf, Sprout, BookOpen, Calendar, Briefcase, MapPin, ChevronLeft,
-  ChevronRight,
+  ChevronRight, Quote, Building2,
 } from "lucide-react";
 import { SiteLayout, SectionEyebrow } from "@/components/site-layout";
-import { getPublicHeroSlides, type HeroSlide } from "@/lib/content-fn";
+import { getPublicHeroSlides, getPublicTestimonials, getPublicPartners, type HeroSlide, type Testimonial, type Partner } from "@/lib/content-fn";
 import heroImg from "@/assets/hero.jpg";
 import progEdu from "@/assets/prog-education.jpg";
 import progHealth from "@/assets/prog-health.jpg";
@@ -353,6 +353,172 @@ function ProjectsAndNews() {
   );
 }
 
+// ── Default seed data shown before any DB entries exist ──────────────────────
+
+const DEFAULT_TESTIMONIALS: Testimonial[] = [
+  { id: 1, name: "Amina Hassan", role: "Community Leader, Mogadishu", quote: "UFF changed everything for our village. Our children now have a safe school to attend and clean water to drink. The foundation doesn't just give — they stay and build with us.", avatar_url: "", sort_order: 1, active: true },
+  { id: 2, name: "Dr. Khalid Osman", role: "Health Partner, Garowe", quote: "Working alongside UFF's health teams showed me what real community medicine looks like. They train local nurses, not just fly in and fly out. That's how change lasts.", avatar_url: "", sort_order: 2, active: true },
+  { id: 3, name: "Fatuma Abdi", role: "Scholarship Recipient", quote: "I was the first girl in my family to finish secondary school. UFF's scholarship didn't just pay fees — they gave me a mentor who believed in me before I believed in myself.", avatar_url: "", sort_order: 3, active: true },
+  { id: 4, name: "Ibrahim Warsame", role: "Smallholder Farmer, Baidoa", quote: "The drought-resistant seeds and training changed our harvest completely. For the first time in years, we sold surplus at market. UFF understands farmers.", avatar_url: "", sort_order: 4, active: true },
+  { id: 5, name: "Nadia Jama", role: "Volunteer Coordinator", quote: "I've volunteered with many NGOs but UFF is different. Every decision goes through the community first. That respect is rare and it makes the impact real.", avatar_url: "", sort_order: 5, active: true },
+  { id: 6, name: "Ahmed Nur", role: "Youth Program Graduate", quote: "The vocational training gave me the skills, but the mentorship gave me the confidence. I now run my own carpentry workshop and employ three other young men.", avatar_url: "", sort_order: 6, active: true },
+];
+
+const DEFAULT_PARTNERS: Partner[] = [
+  { id: 1, name: "UNICEF",        logo_url: "", website_url: "https://unicef.org",     sort_order: 1, active: true },
+  { id: 2, name: "UNHCR",         logo_url: "", website_url: "https://unhcr.org",      sort_order: 2, active: true },
+  { id: 3, name: "WHO",           logo_url: "", website_url: "https://who.int",        sort_order: 3, active: true },
+  { id: 4, name: "WFP",           logo_url: "", website_url: "https://wfp.org",        sort_order: 4, active: true },
+  { id: 5, name: "USAID",         logo_url: "", website_url: "https://usaid.gov",      sort_order: 5, active: true },
+  { id: 6, name: "EU Aid",        logo_url: "", website_url: "https://europa.eu",      sort_order: 6, active: true },
+  { id: 7, name: "Save the Children", logo_url: "", website_url: "https://savethechildren.org", sort_order: 7, active: true },
+  { id: 8, name: "IRC",           logo_url: "", website_url: "https://rescue.org",     sort_order: 8, active: true },
+  { id: 9, name: "Oxfam",         logo_url: "", website_url: "https://oxfam.org",      sort_order: 9, active: true },
+  { id: 10, name: "Care International", logo_url: "", website_url: "https://care.org", sort_order: 10, active: true },
+];
+
+// ── Testimonials ──────────────────────────────────────────────────────────────
+
+function getInitials(name: string) {
+  return name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+}
+
+const AVATAR_COLORS = [
+  "bg-[var(--brand-green)]", "bg-[var(--brand-blue)]", "bg-[var(--brand-navy)]",
+  "bg-emerald-600", "bg-teal-600", "bg-sky-600",
+];
+
+function TestimonialsSection() {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+
+  useEffect(() => {
+    getPublicTestimonials()
+      .then((r) => setTestimonials(r.testimonials.length > 0 ? r.testimonials : DEFAULT_TESTIMONIALS))
+      .catch(() => setTestimonials(DEFAULT_TESTIMONIALS));
+  }, []);
+
+  const items = testimonials.length > 0 ? testimonials : DEFAULT_TESTIMONIALS;
+  // Duplicate for seamless infinite loop
+  const row1 = [...items, ...items];
+  const row2 = [...items.slice().reverse(), ...items.slice().reverse()];
+
+  return (
+    <section className="py-20 bg-[var(--brand-navy-deep)] overflow-hidden">
+      <div className="mx-auto max-w-7xl px-4 mb-12 text-center">
+        <SectionEyebrow label="Testimonials" />
+        <h2 className="mt-3 font-display text-3xl font-extrabold text-white">
+          Voices From the Field
+        </h2>
+        <p className="mt-3 text-sm text-white/60 max-w-xl mx-auto">
+          Real stories from the communities, partners, and individuals whose lives have been touched by UFF's work.
+        </p>
+      </div>
+
+      {/* Row 1 — scrolls left */}
+      <div className="relative mb-4">
+        <div className="flex gap-4 w-max animate-marquee">
+          {row1.map((t, i) => (
+            <TestimonialCard key={`r1-${i}`} t={t} idx={i} />
+          ))}
+        </div>
+      </div>
+
+      {/* Row 2 — scrolls right */}
+      <div className="relative">
+        <div className="flex gap-4 w-max animate-marquee-reverse">
+          {row2.map((t, i) => (
+            <TestimonialCard key={`r2-${i}`} t={t} idx={i + 3} />
+          ))}
+        </div>
+      </div>
+
+      {/* Fade edges */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[var(--brand-navy-deep)] to-transparent" style={{position:'absolute'}} />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[var(--brand-navy-deep)] to-transparent" style={{position:'absolute'}} />
+    </section>
+  );
+}
+
+function TestimonialCard({ t, idx }: { t: Testimonial; idx: number }) {
+  const color = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+  return (
+    <div className="w-72 shrink-0 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 hover:border-[var(--brand-green)]/40 hover:bg-white/10 transition">
+      <Quote className="h-5 w-5 text-[var(--brand-green)] mb-3 opacity-80" />
+      <p className="text-xs leading-relaxed text-white/80 line-clamp-4">{t.quote}</p>
+      <div className="mt-4 flex items-center gap-3">
+        {t.avatar_url ? (
+          <img src={t.avatar_url} alt={t.name} className="h-9 w-9 rounded-full object-cover ring-2 ring-[var(--brand-green)]/40" />
+        ) : (
+          <div className={`h-9 w-9 rounded-full ${color} grid place-items-center text-xs font-bold text-white ring-2 ring-white/20`}>
+            {getInitials(t.name)}
+          </div>
+        )}
+        <div>
+          <div className="text-xs font-semibold text-white">{t.name}</div>
+          <div className="text-[10px] text-white/50">{t.role}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Partners ──────────────────────────────────────────────────────────────────
+
+function PartnersSection() {
+  const [partners, setPartners] = useState<Partner[]>([]);
+
+  useEffect(() => {
+    getPublicPartners()
+      .then((r) => setPartners(r.partners.length > 0 ? r.partners : DEFAULT_PARTNERS))
+      .catch(() => setPartners(DEFAULT_PARTNERS));
+  }, []);
+
+  const items = partners.length > 0 ? partners : DEFAULT_PARTNERS;
+  const row = [...items, ...items]; // duplicate for seamless loop
+
+  return (
+    <section className="py-16 bg-slate-50 overflow-hidden border-y border-border">
+      <div className="mx-auto max-w-7xl px-4 mb-10 text-center">
+        <SectionEyebrow label="Our Partners" />
+        <h2 className="mt-3 font-display text-2xl font-extrabold text-[var(--brand-navy)]">
+          Trusted By Leading Organizations
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          We work with global partners who share our commitment to sustainable community development.
+        </p>
+      </div>
+
+      <div className="relative">
+        <div className="flex gap-6 w-max animate-marquee">
+          {row.map((p, i) => (
+            <PartnerCard key={`p-${i}`} p={p} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PartnerCard({ p }: { p: Partner }) {
+  const inner = (
+    <div className="w-44 h-20 shrink-0 flex flex-col items-center justify-center gap-1.5 rounded-xl border border-border bg-white shadow-sm px-4 hover:border-[var(--brand-green)] hover:shadow-md transition group">
+      {p.logo_url ? (
+        <img src={p.logo_url} alt={p.name} className="h-10 max-w-[120px] object-contain grayscale group-hover:grayscale-0 transition" />
+      ) : (
+        <>
+          <Building2 className="h-6 w-6 text-muted-foreground group-hover:text-[var(--brand-green)] transition" />
+          <span className="text-[11px] font-semibold text-muted-foreground group-hover:text-[var(--brand-navy)] transition text-center leading-tight">{p.name}</span>
+        </>
+      )}
+    </div>
+  );
+
+  if (p.website_url) {
+    return <a href={p.website_url} target="_blank" rel="noreferrer">{inner}</a>;
+  }
+  return inner;
+}
+
 function CTA() {
   return (
     <section className="pb-24">
@@ -386,6 +552,8 @@ function Index() {
       <Impact />
       <Programs />
       <ProjectsAndNews />
+      <TestimonialsSection />
+      <PartnersSection />
       <CTA />
     </SiteLayout>
   );

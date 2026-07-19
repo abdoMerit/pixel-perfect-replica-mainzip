@@ -86,15 +86,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:site", content: "@UFF" },
       { name: "twitter:title", content: "Unique Future Foundation (UFF)" },
       { name: "twitter:description", content: "Unique Future Foundation (UFF) is a non-profit organization building sustainable programs in education, health, environment, and livelihood across communities." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9c22d9c0-fbbe-42c1-90ee-716c1fce9c8f/id-preview-b9d5b0f3--4b97e113-f554-4672-8325-19667899c80a.lovable.app-1784362363170.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9c22d9c0-fbbe-42c1-90ee-716c1fce9c8f/id-preview-b9d5b0f3--4b97e113-f554-4672-8325-19667899c80a.lovable.app-1784362363170.png" },
+      { property: "og:image", content: "/uff-icon.png" },
+      { name: "twitter:image", content: "/uff-icon.png" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/uff-icon.png", type: "image/png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" },
