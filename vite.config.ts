@@ -12,6 +12,9 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Use the bun preset so the production build runs natively on Bun (Render, etc.)
+  // Inside a Lovable sandbox this is ignored and cloudflare-module is forced instead.
+  nitro: { preset: "bun" },
   vite: {
     server: {
       host: "0.0.0.0",

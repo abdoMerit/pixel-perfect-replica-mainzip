@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: uff-website
+    runtime: node
+    buildCommand: bun install && bun run build
+    startCommand: bun run start
+    healthCheckPath: /
+    envVars:
+      - key: DATABASE_URL
+        sync: false          # you will paste this from Render's PostgreSQL dashboard
+      - key: SESSION_SECRET
+        generateValue: true  # Render auto-generates a secure random value
+      - key: NODE_ENV
+        value: production
+
+databases:
+  - name: uff-db
+    databaseName: uff_production
+    user: uff_user
+    plan: free
