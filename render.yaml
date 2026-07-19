@@ -3,7 +3,7 @@ services:
     name: uff-website
     runtime: node
     buildCommand: npm install && npm run build
-    startCommand: node .output/server/index.mjs
+    startCommand: node start-server.mjs
     healthCheckPath: /
     envVars:
       - key: DATABASE_URL

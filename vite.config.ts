@@ -12,9 +12,10 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  // Use the node preset so the production build runs on Node.js (Render's native runtime).
-  // Inside a Lovable sandbox this is ignored and cloudflare-module is forced instead.
-  nitro: { preset: "node" },
+  // Note: @lovable.dev/vite-tanstack-config always forces preset="cloudflare-module"
+  // regardless of what we set here. The start-server.mjs wrapper handles running
+  // that CF-module export as a real Node.js HTTP server on Render.
+  // nitro: { preset: "node" },  ← has no effect, left as documentation only
   vite: {
     server: {
       host: "0.0.0.0",

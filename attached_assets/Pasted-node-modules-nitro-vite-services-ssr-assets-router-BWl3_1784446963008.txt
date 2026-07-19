@@ -1,0 +1,96 @@
+node_modules/.nitro/vite/services/ssr/assets/router-BWl3G-lA.js                                  21.51 kB │ gzip:  4.39 kB
+node_modules/.nitro/vite/services/ssr/assets/routes-DvPgeygi.js                                  23.72 kB │ gzip:  5.28 kB
+node_modules/.nitro/vite/services/ssr/assets/admin.programs-EOum4csZ.js                          25.64 kB │ gzip:  4.35 kB
+node_modules/.nitro/vite/services/ssr/assets/content-fn-C2FD3gfC.js                              31.03 kB │ gzip:  5.30 kB
+node_modules/.nitro/vite/services/ssr/assets/server-_mIjw7T5.js                                  55.44 kB │ gzip: 14.29 kB
+[PLUGIN_TIMINGS] Your build spent significant time in plugins. Here is a breakdown:
+  - tanstack-start-core:import-protection-transform-cache (25%)
+  - tanstack-start-core:import-protection (21%)
+  - tanstack-router:code-splitter:compile-reference-file (18%)
+  - vite-tsconfig-paths (16%)
+  - tanstack-router:code-splitter:compile-virtual-file (9%)
+See https://rolldown.rs/reference/InputOptions.checks#plugintimings for more details.
+✓ built in 23.50s
+[start] [nitro] Building [Nitro] (preset: `node-server`, compatibility: `2026-07-19`)
+[success] [nitro] Generated public .output/public
+vite v8.1.5 building nitro environment for production...
+
+transforming...✓ 2016 modules transformed.
+rendering chunks...
+computing gzip size...
+.output/server/_ssr/hero-CgcOXGq1.mjs                                0.16 kB │ gzip:   0.14 kB
+.output/server/_ssr/admin.index-CJqxYsoj.mjs                         0.16 kB │ gzip:   0.14 kB
+.output/server/_ssr/empty-plugin-adapters-D9UWiqvJ.mjs               0.23 kB │ gzip:   0.16 kB
+.output/server/_ssr/admin-context-CF4OzOJ0.mjs                       0.49 kB │ gzip:   0.30 kB
+.output/server/_ssr/prog-livelihood-DGgDC63T.mjs                     0.49 kB │ gzip:   0.24 kB
+.output/server/_chunks/ssr-renderer.mjs                              0.60 kB │ gzip:   0.36 kB
+.output/server/_ssr/createSsrRpc-DMX4j-qE.mjs                        0.61 kB │ gzip:   0.38 kB
+.output/server/_ssr/createMiddleware-B_4t7rW1.mjs                    0.83 kB │ gzip:   0.33 kB
+.output/server/_ssr/programs._slug-DkGJPVYg.mjs                      0.88 kB │ gzip:   0.48 kB
+.output/server/_ssr/contact-fn-C6NIIUT4.mjs                          1.19 kB │ gzip:   0.56 kB
+.output/server/_ssr/programs._slug-BwnQSm5u.mjs                      1.30 kB │ gzip:   0.61 kB
+.output/server/_ssr/start-BcSBlhe9.mjs                               1.39 kB │ gzip:   0.65 kB
+.output/server/_runtime.mjs                                          1.89 kB │ gzip:   0.86 kB
+.output/server/_ssr/programs._slug-IAzRTayf.mjs                      2.14 kB │ gzip:   0.83 kB
+.output/server/_libs/ufo.mjs                                         2.21 kB │ gzip:   0.72 kB
+.output/server/_ssr/auth-fn-Ckk1ZZC0.mjs                             2.97 kB │ gzip:   1.25 kB
+.output/server/_ssr/contact-fn-dprB15B6.mjs                          3.27 kB │ gzip:   1.22 kB
+.output/server/_ssr/programs.index-DsnNGkx0.mjs                      3.55 kB │ gzip:   1.21 kB
+.output/server/_ssr/news-k70nrwWC.mjs                                4.46 kB │ gzip:   1.50 kB
+.output/server/_ssr/projects-CreL2fQh.mjs                            4.47 kB │ gzip:   1.46 kB
+.output/server/_ssr/volunteer-pi-mGtMi.mjs                           4.61 kB │ gzip:   1.29 kB
+.output/server/_ssr/programs-Cvwbu1E2.mjs                            4.62 kB │ gzip:   1.73 kB
+.output/server/_ssr/ssr.mjs                                          4.64 kB │ gzip:   2.00 kB
+.output/server/_ssr/admin.dashboard-8s-D7pgf.mjs                     6.02 kB │ gzip:   1.65 kB
+.output/server/_ssr/image-upload-C7endOy3.mjs                        6.25 kB │ gzip:   1.86 kB
+.output/server/_ssr/admin.submissions-CpRS-AX4.mjs                   6.30 kB │ gzip:   1.76 kB
+.output/server/_ssr/contact-5aU4ZwKu.mjs                             6.54 kB │ gzip:   2.00 kB
+.output/server/_ssr/admin.about-settings-Drmi2CsO.mjs                6.57 kB │ gzip:   1.63 kB
+.output/server/_ssr/admin.contact-settings-BsPsrxKv.mjs              6.68 kB │ gzip:   2.21 kB
+.output/server/_ssr/programs._slug-bZ10HOtf.mjs                      7.44 kB │ gzip:   1.82 kB
+.output/server/_ssr/auth-fn-CzGMrG3X.mjs                             7.49 kB │ gzip:   2.21 kB
+.output/server/_ssr/reports-DF1gi7FL.mjs                             7.83 kB │ gzip:   2.36 kB
+.output/server/_ssr/admin.home-settings-CvHk5s8V.mjs                 8.02 kB │ gzip:   1.74 kB
+.output/server/_ssr/gallery-DCCHa0CS.mjs                             9.38 kB │ gzip:   2.59 kB
+.output/server/_ssr/createServerFn-CIHAFgYl.mjs                      9.39 kB │ gzip:   2.99 kB
+.output/server/_tanstack-start-manifest_v-By9-BQGI.mjs               9.68 kB │ gzip:   1.67 kB
+.output/server/__23tanstack-start-server-fn-resolver-DQwIi6S2.mjs    9.74 kB │ gzip:   2.61 kB
+.output/server/_libs/h3-v2+rou3.mjs                                  9.81 kB │ gzip:   3.05 kB
+.output/server/_ssr/about-VfggPLUe.mjs                               9.94 kB │ gzip:   2.69 kB
+.output/server/_ssr/admin.gallery-6k74kXfN.mjs                      10.19 kB │ gzip:   2.58 kB
+.output/server/_ssr/admin.projects-CwdY9uVm.mjs                     11.00 kB │ gzip:   2.71 kB
+.output/server/_ssr/admin.news-CYuuuZ3B.mjs                         11.49 kB │ gzip:   2.63 kB
+.output/server/_ssr/content-fn-C4tlC406.mjs                         12.02 kB │ gzip:   2.91 kB
+.output/server/_ssr/events-u_EMXcBI.mjs                             12.04 kB │ gzip:   3.13 kB
+.output/server/_libs/tanstack__history.mjs                          12.09 kB │ gzip:   3.48 kB
+.output/server/_ssr/admin.users-DzmGXjMj.mjs                        12.48 kB │ gzip:   2.98 kB
+.output/server/_ssr/admin.hero-slides-DuqE-ddH.mjs                  13.34 kB │ gzip:   3.13 kB
+.output/server/_ssr/admin-ZJIz8wlF.mjs                              13.48 kB │ gzip:   3.37 kB
+.output/server/_ssr/db-CNARRQbR.mjs                                 14.40 kB │ gzip:   4.60 kB
+.output/server/_ssr/admin.reports-dr-__O-B.mjs                      14.61 kB │ gzip:   3.46 kB
+.output/server/_ssr/site-layout-b84pCIND.mjs                        15.19 kB │ gzip:   3.05 kB
+.output/server/_libs/react+tanstack__react-query.mjs                17.59 kB │ gzip:   4.63 kB
+.output/server/_ssr/admin.events-BDcdpWik.mjs                       19.85 kB │ gzip:   3.84 kB
+.output/server/_ssr/router-BWl3G-lA.mjs                             20.93 kB │ gzip:   4.39 kB
+.output/server/_ssr/routes-DvPgeygi.mjs                             27.18 kB │ gzip:   5.46 kB
+.output/server/index.mjs                                            29.08 kB │ gzip:   7.87 kB
+.output/server/_ssr/admin.programs-EOum4csZ.mjs                     29.62 kB │ gzip:   4.51 kB
+.output/server/_libs/lucide-react.mjs                               31.26 kB │ gzip:   6.20 kB
+.output/server/_ssr/content-fn-C2FD3gfC.mjs                         31.47 kB │ gzip:   5.38 kB
+.output/server/_libs/h3+rou3+srvx.mjs                               46.64 kB │ gzip:  12.53 kB
+.output/server/_libs/tanstack__query-core.mjs                       47.96 kB │ gzip:  10.65 kB
+.output/server/_ssr/server-_mIjw7T5.mjs                             54.08 kB │ gzip:  14.16 kB
+.output/server/_libs/@tanstack/router-core+[...].mjs                80.07 kB │ gzip:  20.12 kB
+.output/server/_libs/zod.mjs                                       100.02 kB │ gzip:  17.31 kB
+.output/server/_libs/pg.mjs                                        144.76 kB │ gzip:  33.70 kB
+.output/server/_libs/@tanstack/react-router+[...].mjs              671.30 kB │ gzip: 140.49 kB
+✓ built in 12.10s
+[info] Generated .output/nitro.json
+[success] [nitro] You can preview this build using `npx vite preview`
+==> Application exited early
+==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+==> Running 'npm run build'
+==> No open ports detected, continuing to scan...
+==> Docs on specifying a port: https://render.com/docs/web-services#port-binding
+> build
+> vite build
