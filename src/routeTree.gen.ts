@@ -22,12 +22,15 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProgramsIndexRouteImport } from './routes/programs.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ProgramsSlugRouteImport } from './routes/programs.$slug'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions'
+import { Route as AdminReportsRouteImport } from './routes/admin.reports'
 import { Route as AdminProjectsRouteImport } from './routes/admin.projects'
 import { Route as AdminProgramsRouteImport } from './routes/admin.programs'
 import { Route as AdminNewsRouteImport } from './routes/admin.news'
 import { Route as AdminHomeSettingsRouteImport } from './routes/admin.home-settings'
 import { Route as AdminHeroSlidesRouteImport } from './routes/admin.hero-slides'
+import { Route as AdminGalleryRouteImport } from './routes/admin.gallery'
 import { Route as AdminEventsRouteImport } from './routes/admin.events'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminContactSettingsRouteImport } from './routes/admin.contact-settings'
@@ -98,9 +101,19 @@ const ProgramsSlugRoute = ProgramsSlugRouteImport.update({
   path: '/programs/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSubmissionsRoute = AdminSubmissionsRouteImport.update({
   id: '/submissions',
   path: '/submissions',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminReportsRoute = AdminReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminProjectsRoute = AdminProjectsRouteImport.update({
@@ -126,6 +139,11 @@ const AdminHomeSettingsRoute = AdminHomeSettingsRouteImport.update({
 const AdminHeroSlidesRoute = AdminHeroSlidesRouteImport.update({
   id: '/hero-slides',
   path: '/hero-slides',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminGalleryRoute = AdminGalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminEventsRoute = AdminEventsRouteImport.update({
@@ -164,12 +182,15 @@ export interface FileRoutesByFullPath {
   '/admin/contact-settings': typeof AdminContactSettingsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/events': typeof AdminEventsRoute
+  '/admin/gallery': typeof AdminGalleryRoute
   '/admin/hero-slides': typeof AdminHeroSlidesRoute
   '/admin/home-settings': typeof AdminHomeSettingsRoute
   '/admin/news': typeof AdminNewsRoute
   '/admin/programs': typeof AdminProgramsRoute
   '/admin/projects': typeof AdminProjectsRoute
+  '/admin/reports': typeof AdminReportsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/programs/$slug': typeof ProgramsSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/programs/': typeof ProgramsIndexRoute
@@ -188,12 +209,15 @@ export interface FileRoutesByTo {
   '/admin/contact-settings': typeof AdminContactSettingsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/events': typeof AdminEventsRoute
+  '/admin/gallery': typeof AdminGalleryRoute
   '/admin/hero-slides': typeof AdminHeroSlidesRoute
   '/admin/home-settings': typeof AdminHomeSettingsRoute
   '/admin/news': typeof AdminNewsRoute
   '/admin/programs': typeof AdminProgramsRoute
   '/admin/projects': typeof AdminProjectsRoute
+  '/admin/reports': typeof AdminReportsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/programs/$slug': typeof ProgramsSlugRoute
   '/admin': typeof AdminIndexRoute
   '/programs': typeof ProgramsIndexRoute
@@ -214,12 +238,15 @@ export interface FileRoutesById {
   '/admin/contact-settings': typeof AdminContactSettingsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/events': typeof AdminEventsRoute
+  '/admin/gallery': typeof AdminGalleryRoute
   '/admin/hero-slides': typeof AdminHeroSlidesRoute
   '/admin/home-settings': typeof AdminHomeSettingsRoute
   '/admin/news': typeof AdminNewsRoute
   '/admin/programs': typeof AdminProgramsRoute
   '/admin/projects': typeof AdminProjectsRoute
+  '/admin/reports': typeof AdminReportsRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/programs/$slug': typeof ProgramsSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/programs/': typeof ProgramsIndexRoute
@@ -241,12 +268,15 @@ export interface FileRouteTypes {
     | '/admin/contact-settings'
     | '/admin/dashboard'
     | '/admin/events'
+    | '/admin/gallery'
     | '/admin/hero-slides'
     | '/admin/home-settings'
     | '/admin/news'
     | '/admin/programs'
     | '/admin/projects'
+    | '/admin/reports'
     | '/admin/submissions'
+    | '/admin/users'
     | '/programs/$slug'
     | '/admin/'
     | '/programs/'
@@ -265,12 +295,15 @@ export interface FileRouteTypes {
     | '/admin/contact-settings'
     | '/admin/dashboard'
     | '/admin/events'
+    | '/admin/gallery'
     | '/admin/hero-slides'
     | '/admin/home-settings'
     | '/admin/news'
     | '/admin/programs'
     | '/admin/projects'
+    | '/admin/reports'
     | '/admin/submissions'
+    | '/admin/users'
     | '/programs/$slug'
     | '/admin'
     | '/programs'
@@ -290,12 +323,15 @@ export interface FileRouteTypes {
     | '/admin/contact-settings'
     | '/admin/dashboard'
     | '/admin/events'
+    | '/admin/gallery'
     | '/admin/hero-slides'
     | '/admin/home-settings'
     | '/admin/news'
     | '/admin/programs'
     | '/admin/projects'
+    | '/admin/reports'
     | '/admin/submissions'
+    | '/admin/users'
     | '/programs/$slug'
     | '/admin/'
     | '/programs/'
@@ -409,11 +445,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProgramsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/submissions': {
       id: '/admin/submissions'
       path: '/submissions'
       fullPath: '/admin/submissions'
       preLoaderRoute: typeof AdminSubmissionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/reports': {
+      id: '/admin/reports'
+      path: '/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AdminReportsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/projects': {
@@ -449,6 +499,13 @@ declare module '@tanstack/react-router' {
       path: '/hero-slides'
       fullPath: '/admin/hero-slides'
       preLoaderRoute: typeof AdminHeroSlidesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/gallery': {
+      id: '/admin/gallery'
+      path: '/gallery'
+      fullPath: '/admin/gallery'
+      preLoaderRoute: typeof AdminGalleryRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/events': {
@@ -487,12 +544,15 @@ interface AdminRouteChildren {
   AdminContactSettingsRoute: typeof AdminContactSettingsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminEventsRoute: typeof AdminEventsRoute
+  AdminGalleryRoute: typeof AdminGalleryRoute
   AdminHeroSlidesRoute: typeof AdminHeroSlidesRoute
   AdminHomeSettingsRoute: typeof AdminHomeSettingsRoute
   AdminNewsRoute: typeof AdminNewsRoute
   AdminProgramsRoute: typeof AdminProgramsRoute
   AdminProjectsRoute: typeof AdminProjectsRoute
+  AdminReportsRoute: typeof AdminReportsRoute
   AdminSubmissionsRoute: typeof AdminSubmissionsRoute
+  AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -501,12 +561,15 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminContactSettingsRoute: AdminContactSettingsRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminEventsRoute: AdminEventsRoute,
+  AdminGalleryRoute: AdminGalleryRoute,
   AdminHeroSlidesRoute: AdminHeroSlidesRoute,
   AdminHomeSettingsRoute: AdminHomeSettingsRoute,
   AdminNewsRoute: AdminNewsRoute,
   AdminProgramsRoute: AdminProgramsRoute,
   AdminProjectsRoute: AdminProjectsRoute,
+  AdminReportsRoute: AdminReportsRoute,
   AdminSubmissionsRoute: AdminSubmissionsRoute,
+  AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 

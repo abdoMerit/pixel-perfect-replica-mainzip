@@ -90,6 +90,61 @@ export const staffRegister = createServerFn({ method: "POST" })
     return { token, email: user.email, name: user.name };
   });
 
+// ── Admin: user management ────────────────────────────────────────────────────
+
+export type StaffUser = {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  created_at: string;
+};
+
+export const adminListUsers = createServerFn({ method: "POST" })
+  .validator((d: unknown) => z.object({ token: z.string() }).parse(d))
+  .handler(async ({ data }) => {
+    verifyStaffToken(data.token);
+    await ensureSchema();
+    const r = await query(`SELECT id, name, email, role, created_at FROM staff_users ORDER BY created_at ASC`);
+    return { users: r.rows as StaffUser[] };
+  });
+
+export const adminCreateUser = createServerFn({ method: "POST" })
+  .validator((d: unknown) => z.object({ token: z.string(), name: z.string().min(2), email: z.string().email(), password: z.string().min(6), role: z.string().default("editor") }).parse(d))
+  .handler(async ({ data }) => {
+    verifyStaffToken(data.token);
+    await ensureSchema();
+    const existing = await query(`SELECT id FROM staff_users WHERE email=$1`, [data.email.toLowerCase()]);
+    if (existing.rows.length > 0) throw new Error("An account with this email already exists");
+    const hash = hashPassword(data.password);
+    const r = await query(
+      `INSERT INTO staff_users (name, email, password_hash, role) VALUES ($1,$2,$3,$4) RETURNING id, name, email, role, created_at`,
+      [data.name.trim(), data.email.toLowerCase(), hash, data.role],
+    );
+    return { user: r.rows[0] as StaffUser };
+  });
+
+export const adminUpdateUserRole = createServerFn({ method: "POST" })
+  .validator((d: unknown) => z.object({ token: z.string(), id: z.number(), role: z.string() }).parse(d))
+  .handler(async ({ data }) => {
+    verifyStaffToken(data.token);
+    await ensureSchema();
+    await query(`UPDATE staff_users SET role=$1 WHERE id=$2`, [data.role, data.id]);
+    return { ok: true };
+  });
+
+export const adminDeleteUser = createServerFn({ method: "POST" })
+  .validator((d: unknown) => z.object({ token: z.string(), id: z.number() }).parse(d))
+  .handler(async ({ data }) => {
+    const me = verifyStaffToken(data.token);
+    await ensureSchema();
+    // Prevent deleting yourself
+    const target = await query(`SELECT email FROM staff_users WHERE id=$1`, [data.id]);
+    if (target.rows[0]?.email === me.email) throw new Error("You cannot delete your own account");
+    await query(`DELETE FROM staff_users WHERE id=$1`, [data.id]);
+    return { ok: true };
+  });
+
 // ── Login ─────────────────────────────────────────────────────────────────────
 
 export const staffLogin = createServerFn({ method: "POST" })

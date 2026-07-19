@@ -119,9 +119,33 @@ export async function ensureSchema(): Promise<void> {
       sort_order INTEGER DEFAULT 0
     )
   `);
+  await query(`
+    CREATE TABLE IF NOT EXISTS gallery_photos (
+      id         SERIAL PRIMARY KEY,
+      image_url  TEXT NOT NULL,
+      caption    TEXT DEFAULT '',
+      category   TEXT DEFAULT 'General',
+      sort_order INTEGER DEFAULT 0,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
+  await query(`
+    CREATE TABLE IF NOT EXISTS reports (
+      id          SERIAL PRIMARY KEY,
+      title       TEXT NOT NULL,
+      year        TEXT NOT NULL DEFAULT '',
+      report_type TEXT NOT NULL DEFAULT 'Annual Report',
+      description TEXT DEFAULT '',
+      file_url    TEXT DEFAULT '',
+      sort_order  INTEGER DEFAULT 0,
+      created_at  TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
   // Extend programs with media columns (safe to run repeatedly)
   await query(`ALTER TABLE programs ADD COLUMN IF NOT EXISTS image_url TEXT DEFAULT ''`);
   await query(`ALTER TABLE programs ADD COLUMN IF NOT EXISTS video_url TEXT DEFAULT ''`);
+  // Extend staff_users with role column
+  await query(`ALTER TABLE staff_users ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT 'editor'`);
 
   // ── Seed site_settings ───────────────────────────────────────────────
   const defaults: [string, string][] = [

@@ -67,11 +67,32 @@ export type EventMedia = {
   sort_order: number;
 };
 
+export type GalleryPhoto = {
+  id: number;
+  image_url: string;
+  caption: string;
+  category: string;
+  sort_order: number;
+};
+
+export type CmsReport = {
+  id: number;
+  title: string;
+  year: string;
+  report_type: string;
+  description: string;
+  file_url: string;
+  sort_order: number;
+};
+
 export type DashboardStats = {
   eventCount: number;
   newsCount: number;
   projectCount: number;
   submissionCount: number;
+  galleryCount: number;
+  reportCount: number;
+  userCount: number;
 };
 
 // ── Auth helper ───────────────────────────────────────────────────────────────
@@ -462,6 +483,112 @@ export const adminDeleteEventMedia = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// ── Public: gallery ───────────────────────────────────────────────────────────
+
+export const getPublicGallery = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await ensureSchema();
+    const r = await query(`SELECT * FROM gallery_photos ORDER BY sort_order ASC, created_at DESC`);
+    return { photos: r.rows as GalleryPhoto[] };
+  });
+
+// ── Admin: gallery ────────────────────────────────────────────────────────────
+
+export const adminGetGallery = createServerFn({ method: "POST" })
+  .validator((d: unknown) => AuthSchema.parse(d))
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    const r = await query(`SELECT * FROM gallery_photos ORDER BY sort_order ASC, created_at DESC`);
+    return { photos: r.rows as GalleryPhoto[] };
+  });
+
+export const adminCreateGalleryPhoto = createServerFn({ method: "POST" })
+  .validator((d: unknown) => z.object({ token: z.string(), image_url: z.string().min(1), caption: z.string().default(""), category: z.string().default("General"), sort_order: z.number().default(0) }).parse(d))
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    const r = await query(
+      `INSERT INTO gallery_photos (image_url, caption, category, sort_order) VALUES ($1,$2,$3,$4) RETURNING *`,
+      [data.image_url, data.caption, data.category, data.sort_order],
+    );
+    return { photo: r.rows[0] as GalleryPhoto };
+  });
+
+export const adminUpdateGalleryPhoto = createServerFn({ method: "POST" })
+  .validator((d: unknown) => z.object({ token: z.string(), id: z.number(), image_url: z.string().min(1), caption: z.string().default(""), category: z.string().default("General"), sort_order: z.number().default(0) }).parse(d))
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    const r = await query(
+      `UPDATE gallery_photos SET image_url=$1, caption=$2, category=$3, sort_order=$4 WHERE id=$5 RETURNING *`,
+      [data.image_url, data.caption, data.category, data.sort_order, data.id],
+    );
+    return { photo: r.rows[0] as GalleryPhoto };
+  });
+
+export const adminDeleteGalleryPhoto = createServerFn({ method: "POST" })
+  .validator((d: unknown) => z.object({ token: z.string(), id: z.number() }).parse(d))
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    await query(`DELETE FROM gallery_photos WHERE id=$1`, [data.id]);
+    return { ok: true };
+  });
+
+// ── Public: reports ───────────────────────────────────────────────────────────
+
+export const getPublicReports = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await ensureSchema();
+    const r = await query(`SELECT * FROM reports ORDER BY sort_order ASC, created_at DESC`);
+    return { reports: r.rows as CmsReport[] };
+  });
+
+// ── Admin: reports ────────────────────────────────────────────────────────────
+
+export const adminGetReports = createServerFn({ method: "POST" })
+  .validator((d: unknown) => AuthSchema.parse(d))
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    const r = await query(`SELECT * FROM reports ORDER BY sort_order ASC, created_at DESC`);
+    return { reports: r.rows as CmsReport[] };
+  });
+
+export const adminCreateReport = createServerFn({ method: "POST" })
+  .validator((d: unknown) => z.object({ token: z.string(), title: z.string().min(1), year: z.string().default(""), report_type: z.string().default("Annual Report"), description: z.string().default(""), file_url: z.string().default(""), sort_order: z.number().default(0) }).parse(d))
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    const r = await query(
+      `INSERT INTO reports (title, year, report_type, description, file_url, sort_order) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
+      [data.title, data.year, data.report_type, data.description, data.file_url, data.sort_order],
+    );
+    return { report: r.rows[0] as CmsReport };
+  });
+
+export const adminUpdateReport = createServerFn({ method: "POST" })
+  .validator((d: unknown) => z.object({ token: z.string(), id: z.number(), title: z.string().min(1), year: z.string().default(""), report_type: z.string().default("Annual Report"), description: z.string().default(""), file_url: z.string().default(""), sort_order: z.number().default(0) }).parse(d))
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    const r = await query(
+      `UPDATE reports SET title=$1, year=$2, report_type=$3, description=$4, file_url=$5, sort_order=$6 WHERE id=$7 RETURNING *`,
+      [data.title, data.year, data.report_type, data.description, data.file_url, data.sort_order, data.id],
+    );
+    return { report: r.rows[0] as CmsReport };
+  });
+
+export const adminDeleteReport = createServerFn({ method: "POST" })
+  .validator((d: unknown) => z.object({ token: z.string(), id: z.number() }).parse(d))
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    await query(`DELETE FROM reports WHERE id=$1`, [data.id]);
+    return { ok: true };
+  });
+
 // ── Admin: dashboard stats ────────────────────────────────────────────────────
 
 export const adminGetDashboardStats = createServerFn({ method: "POST" })
@@ -469,11 +596,14 @@ export const adminGetDashboardStats = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     requireAdmin(data.token);
     await ensureSchema();
-    const [evts, news, projs, subs] = await Promise.all([
+    const [evts, news, projs, subs, gallery, rpts, users] = await Promise.all([
       query(`SELECT COUNT(*) FROM events`),
       query(`SELECT COUNT(*) FROM news_articles`),
       query(`SELECT COUNT(*) FROM projects`),
       query(`SELECT COUNT(*) FROM contact_submissions`),
+      query(`SELECT COUNT(*) FROM gallery_photos`),
+      query(`SELECT COUNT(*) FROM reports`),
+      query(`SELECT COUNT(*) FROM staff_users`),
     ]);
     return {
       stats: {
@@ -481,6 +611,9 @@ export const adminGetDashboardStats = createServerFn({ method: "POST" })
         newsCount: parseInt(news.rows[0].count),
         projectCount: parseInt(projs.rows[0].count),
         submissionCount: parseInt(subs.rows[0].count),
+        galleryCount: parseInt(gallery.rows[0].count),
+        reportCount: parseInt(rpts.rows[0].count),
+        userCount: parseInt(users.rows[0].count),
       } satisfies DashboardStats,
     };
   });

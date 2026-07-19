@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { FileText, Download, ExternalLink } from "lucide-react";
 import { SiteLayout, PageHero, SectionEyebrow } from "@/components/site-layout";
+import { getPublicReports, type CmsReport } from "@/lib/content-fn";
 
 export const Route = createFileRoute("/reports")({
   head: () => ({
@@ -14,66 +16,38 @@ export const Route = createFileRoute("/reports")({
   component: ReportsPage,
 });
 
-type Report = {
-  title: string;
-  year: string;
-  type: string;
-  description: string;
-  url?: string;
+const TYPE_COLORS: Record<string, string> = {
+  "Annual Report":    "bg-[var(--brand-green-dark)] text-white",
+  "Program Report":   "bg-[var(--brand-blue)] text-white",
+  "Profile":          "bg-[var(--brand-orange)] text-white",
+  "Field Report":     "bg-purple-600 text-white",
+  "Financial Report": "bg-slate-600 text-white",
+  "Other":            "bg-slate-400 text-white",
 };
 
-const REPORTS: Report[] = [
-  {
-    title: "UFF Annual Report 2024",
-    year: "2024",
-    type: "Annual Report",
-    description: "A comprehensive overview of our programs, impact, financials, and stories from the field in 2024.",
-  },
-  {
-    title: "UFF Annual Report 2023",
-    year: "2023",
-    type: "Annual Report",
-    description: "Highlights of our education, health, environment, and livelihood programs across communities served in 2023.",
-  },
-  {
-    title: "Organization Profile 2023",
-    year: "2023",
-    type: "Profile",
-    description: "An overview of Unique Future Foundation — our mission, programs, geographic reach, and partnerships.",
-  },
-  {
-    title: "Education Program Evaluation Report",
-    year: "2022",
-    type: "Program Report",
-    description: "An independent evaluation of our girls' scholarship and classroom construction programs in Puntland.",
-  },
-  {
-    title: "Clean Water Initiative — Final Report",
-    year: "2022",
-    type: "Program Report",
-    description: "Results, learnings, and community outcomes from our clean water welldrilling initiative in Kismayo.",
-  },
-  {
-    title: "Community Health Program Mid-Term Report",
-    year: "2021",
-    type: "Program Report",
-    description: "Progress review of our mobile clinic and maternal health programs across Garowe and surrounding districts.",
-  },
-  {
-    title: "UFF Annual Report 2020–2021",
-    year: "2021",
-    type: "Annual Report",
-    description: "Two-year combined annual report covering organizational growth and field impact during 2020 and 2021.",
-  },
+// Fallback placeholder reports shown when database is empty
+const PLACEHOLDER_REPORTS = [
+  { id: -1, title: "UFF Annual Report 2024", year: "2024", report_type: "Annual Report", description: "A comprehensive overview of our programs, impact, financials, and stories from the field in 2024.", file_url: "", sort_order: 0 },
+  { id: -2, title: "UFF Annual Report 2023", year: "2023", report_type: "Annual Report", description: "Highlights of our education, health, environment, and livelihood programs in 2023.", file_url: "", sort_order: 1 },
+  { id: -3, title: "Organization Profile 2023", year: "2023", report_type: "Profile", description: "An overview of Unique Future Foundation — our mission, programs, reach, and partnerships.", file_url: "", sort_order: 2 },
+  { id: -4, title: "Education Program Evaluation", year: "2022", report_type: "Program Report", description: "An independent evaluation of our girls' scholarship and classroom construction programs.", file_url: "", sort_order: 3 },
+  { id: -5, title: "Clean Water Initiative — Final Report", year: "2022", report_type: "Program Report", description: "Results and community outcomes from our clean water welldrilling initiative in Kismayo.", file_url: "", sort_order: 4 },
+  { id: -6, title: "Community Health Program Mid-Term Report", year: "2021", report_type: "Program Report", description: "Progress review of mobile clinic and maternal health programs in Garowe.", file_url: "", sort_order: 5 },
 ];
 
-const TYPE_COLORS: Record<string, string> = {
-  "Annual Report": "bg-[var(--brand-green-dark)] text-white",
-  "Program Report": "bg-[var(--brand-blue)] text-white",
-  "Profile": "bg-[var(--brand-orange)] text-white",
-};
-
 function ReportsPage() {
+  const [reports, setReports] = useState<CmsReport[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getPublicReports()
+      .then((r) => setReports(r.reports))
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const displayReports = reports.length > 0 ? reports : (loading ? [] : PLACEHOLDER_REPORTS as CmsReport[]);
+
   return (
     <SiteLayout>
       <PageHero title="Reports & Publications" breadcrumb="Reports" />
@@ -90,43 +64,49 @@ function ReportsPage() {
             </p>
           </div>
 
-          <div className="mt-12 divide-y divide-border rounded-lg border border-border bg-white shadow-sm">
-            {REPORTS.map((r, i) => (
-              <div key={i} className="flex flex-col gap-3 p-6 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-start gap-4">
-                  <div className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--brand-green)]/10">
-                    <FileText className="h-5 w-5 text-[var(--brand-green-dark)]" />
-                  </div>
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="text-sm font-semibold text-[var(--brand-navy)]">{r.title}</h3>
-                      <span className={`rounded px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${TYPE_COLORS[r.type] ?? "bg-slate-200 text-slate-700"}`}>
-                        {r.type}
-                      </span>
+          {loading ? (
+            <div className="mt-12 space-y-3">
+              {[1, 2, 3, 4].map((i) => <div key={i} className="h-20 animate-pulse rounded-lg border border-border bg-white" />)}
+            </div>
+          ) : (
+            <div className="mt-12 divide-y divide-border rounded-lg border border-border bg-white shadow-sm">
+              {displayReports.map((r) => (
+                <div key={r.id} className="flex flex-col gap-3 p-6 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-start gap-4">
+                    <div className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--brand-green)]/10">
+                      <FileText className="h-5 w-5 text-[var(--brand-green-dark)]" />
                     </div>
-                    <p className="mt-1 text-xs text-muted-foreground">{r.description}</p>
-                    <p className="mt-1 text-[11px] text-muted-foreground/60">{r.year}</p>
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="text-sm font-semibold text-[var(--brand-navy)]">{r.title}</h3>
+                        <span className={`rounded px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${TYPE_COLORS[r.report_type] ?? "bg-slate-200 text-slate-700"}`}>
+                          {r.report_type}
+                        </span>
+                      </div>
+                      {r.description && <p className="mt-1 text-xs text-muted-foreground">{r.description}</p>}
+                      {r.year && <p className="mt-1 text-[11px] text-muted-foreground/60">{r.year}</p>}
+                    </div>
+                  </div>
+                  <div className="ml-15 sm:ml-0 shrink-0">
+                    {r.file_url ? (
+                      <a
+                        href={r.file_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded border border-[var(--brand-green)] px-4 py-2 text-xs font-semibold text-[var(--brand-green-dark)] hover:bg-[var(--brand-green)] hover:text-white transition"
+                      >
+                        <Download className="h-3.5 w-3.5" /> Download
+                      </a>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 rounded border border-border px-4 py-2 text-xs font-semibold text-muted-foreground cursor-not-allowed">
+                        <ExternalLink className="h-3.5 w-3.5" /> Coming Soon
+                      </span>
+                    )}
                   </div>
                 </div>
-                <div className="ml-15 sm:ml-0 shrink-0">
-                  {r.url ? (
-                    <a
-                      href={r.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded border border-[var(--brand-green)] px-4 py-2 text-xs font-semibold text-[var(--brand-green-dark)] hover:bg-[var(--brand-green)] hover:text-white transition"
-                    >
-                      <Download className="h-3.5 w-3.5" /> Download
-                    </a>
-                  ) : (
-                    <span className="inline-flex items-center gap-1.5 rounded border border-border px-4 py-2 text-xs font-semibold text-muted-foreground cursor-not-allowed">
-                      <ExternalLink className="h-3.5 w-3.5" /> Coming Soon
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           <div className="mt-10 rounded-lg border border-[var(--brand-green)]/30 bg-[var(--brand-green)]/5 p-6 text-sm text-[var(--brand-navy)]">
             <strong className="block mb-1">Need a specific report?</strong>

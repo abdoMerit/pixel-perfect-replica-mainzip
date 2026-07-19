@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, useCallback } from "react";
 import { X, ChevronLeft, ChevronRight, Image } from "lucide-react";
 import { SiteLayout, PageHero, SectionEyebrow } from "@/components/site-layout";
-import { getPublicProjects, getPublicEvents, type CmsProject, type CmsEvent } from "@/lib/content-fn";
-import { getEventMedia, type EventMedia } from "@/lib/content-fn";
+import { getPublicProjects, getPublicEvents, getPublicGallery, type CmsEvent } from "@/lib/content-fn";
+import { getEventMedia } from "@/lib/content-fn";
 
 export const Route = createFileRoute("/gallery")({
   head: () => ({
@@ -34,21 +34,27 @@ function GalleryPage() {
   useEffect(() => {
     async function load() {
       try {
-        const [projRes, evtRes] = await Promise.all([
+        const [galleryRes, projRes, evtRes] = await Promise.all([
+          getPublicGallery(),
           getPublicProjects(),
           getPublicEvents(),
         ]);
 
         const collected: GalleryImage[] = [];
 
-        // Add project images
+        // 1. Admin-managed gallery photos (highest priority, shown first)
+        for (const p of galleryRes.photos) {
+          collected.push({ url: p.image_url, caption: p.caption || "", category: p.category });
+        }
+
+        // 2. Project images
         for (const p of projRes.projects) {
           if (p.image_url) {
             collected.push({ url: p.image_url, caption: p.title, category: p.category ?? "Projects" });
           }
         }
 
-        // Add event media (images only)
+        // 3. Event media
         const events: CmsEvent[] = evtRes.events;
         await Promise.all(
           events.map(async (evt) => {
@@ -56,16 +62,10 @@ function GalleryPage() {
               const mediaRes = await getEventMedia({ data: { eventId: evt.id } });
               for (const m of mediaRes.media) {
                 if (m.type === "image" && m.url) {
-                  collected.push({
-                    url: m.url,
-                    caption: m.caption || evt.title,
-                    category: "Events",
-                  });
+                  collected.push({ url: m.url, caption: m.caption || evt.title, category: "Events" });
                 }
               }
-            } catch {
-              // skip if no media
-            }
+            } catch { /* skip */ }
           })
         );
 
@@ -149,7 +149,7 @@ function GalleryPage() {
           ) : filtered.length === 0 ? (
             <div className="mt-20 flex flex-col items-center gap-4 text-center text-muted-foreground">
               <Image className="h-12 w-12 opacity-20" />
-              <p className="text-sm">No photos yet. Upload event or project images in the admin panel.</p>
+              <p className="text-sm">No photos yet. Upload images via the admin panel.</p>
             </div>
           ) : (
             <div className="mt-10 grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

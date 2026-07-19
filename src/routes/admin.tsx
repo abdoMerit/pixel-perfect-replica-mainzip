@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import {
   LogIn, UserPlus, LayoutDashboard, Calendar, Newspaper, FolderKanban,
-  BookOpen, MessageSquare, ChevronRight,
+  BookOpen, MessageSquare, ChevronRight, GalleryHorizontal, FileText, Users,
   LogOut, Menu, Home, Info, Images, Phone,
 } from "lucide-react";
 import { AdminContext } from "@/lib/admin-context";
@@ -36,14 +36,27 @@ const NAV = [
   {
     label: "Media",
     items: [
-      { icon: Images, label: "Hero Slides",   to: "/admin/hero-slides"       as const },
-      { icon: Phone,  label: "Contact & Info", to: "/admin/contact-settings" as const },
+      { icon: Images,            label: "Hero Slides",    to: "/admin/hero-slides"      as const },
+      { icon: GalleryHorizontal, label: "Gallery",        to: "/admin/gallery"          as const },
+      { icon: Phone,             label: "Contact & Info", to: "/admin/contact-settings" as const },
+    ],
+  },
+  {
+    label: "Publications",
+    items: [
+      { icon: FileText, label: "Reports", to: "/admin/reports" as const },
     ],
   },
   {
     label: "Data",
     items: [
       { icon: MessageSquare, label: "Submissions", to: "/admin/submissions" as const },
+    ],
+  },
+  {
+    label: "Team",
+    items: [
+      { icon: Users, label: "Users & Roles", to: "/admin/users" as const },
     ],
   },
 ];
