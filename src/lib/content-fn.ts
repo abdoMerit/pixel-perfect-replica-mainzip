@@ -323,10 +323,53 @@ export const getPublicPrograms = createServerFn({ method: "GET" })
     return { programs: r.rows as ProgramData[] };
   });
 
-// ── Admin: programs update ────────────────────────────────────────────────────
+// ── Admin: programs CRUD ──────────────────────────────────────────────────────
 
 const HighlightSchema = z.object({ title: z.string(), text: z.string() });
 const StatSchema = z.object({ n: z.string(), l: z.string() });
+
+export const adminCreateProgram = createServerFn({ method: "POST" })
+  .validator((d: unknown) =>
+    z.object({
+      token: z.string(),
+      slug: z.string().min(1),
+      title: z.string().min(1),
+      tagline: z.string().optional(),
+      summary: z.string().optional(),
+      image_url: z.string().optional(),
+      video_url: z.string().optional(),
+      highlights: z.array(HighlightSchema).optional(),
+      stats: z.array(StatSchema).optional(),
+    }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    await query(
+      `INSERT INTO programs (slug, title, tagline, summary, image_url, video_url, highlights, stats)
+       VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8::jsonb)`,
+      [
+        data.slug,
+        data.title,
+        data.tagline ?? null,
+        data.summary ?? null,
+        data.image_url ?? "",
+        data.video_url ?? "",
+        JSON.stringify(data.highlights ?? []),
+        JSON.stringify(data.stats ?? []),
+      ],
+    );
+    return { ok: true };
+  });
+
+export const adminDeleteProgram = createServerFn({ method: "POST" })
+  .validator((d: unknown) => z.object({ token: z.string(), slug: z.string() }).parse(d))
+  .handler(async ({ data }) => {
+    requireAdmin(data.token);
+    await ensureSchema();
+    await query(`DELETE FROM programs WHERE slug=$1`, [data.slug]);
+    return { ok: true };
+  });
 
 export const adminUpdateProgram = createServerFn({ method: "POST" })
   .validator((d: unknown) =>
