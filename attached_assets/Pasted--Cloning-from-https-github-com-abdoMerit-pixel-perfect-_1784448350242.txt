@@ -1,0 +1,73 @@
+==> Cloning from https://github.com/abdoMerit/pixel-perfect-replica-mainzip
+==> Checking out commit 08a840d168a1878c4b97ec85969c66102be11fdc in branch main
+==> Using Node.js version 24.14.1 (default)
+==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+==> Using Bun version 1.3.14 (default)
+==> Docs on specifying a Bun version: https://render.com/docs/bun-version
+==> Running build command 'npm install'...
+added 364 packages, and audited 365 packages in 49s
+66 packages are looking for funding
+  run `npm fund` for details
+6 moderate severity vulnerabilities
+To address issues that do not require attention, run:
+  npm audit fix
+Some issues need review, and may require choosing
+a different dependency.
+Run `npm audit` for details.
+==> Uploading build...
+==> Uploaded in 3.9s. Compression took 2.9s
+==> Build successful 🎉
+==> Deploying...
+==> Setting WEB_CONCURRENCY=1 by default, based on available CPUs in the instance
+==> Running 'npm run build'
+> build
+> vite build
+vite.config.ts (7:29) [UNRESOLVED_IMPORT] Could not resolve '@lovable.dev/vite-tanstack-config' in vite.config.ts
+   ╭─[ vite.config.ts:7:30 ]
+   │
+ 7 │ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+   │                              ─────────────────┬─────────────────  
+   │                                               ╰─────────────────── Module not found, treating it as an external dependency
+───╯
+failed to load config from /opt/render/project/src/vite.config.ts
+error during build:
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@lovable.dev/vite-tanstack-config' imported from /opt/render/project/src/node_modules/.vite-temp/vite.config.ts.timestamp-1784448190816-18a0b97f6a6e48.mjs
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:301:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:859:18)
+    at defaultResolve (node:internal/modules/esm/resolve:991:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:719:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:736:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:765:52)
+    at #resolve (node:internal/modules/esm/loader:701:17)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:621:35)
+    at ModuleJob.syncLink (node:internal/modules/esm/module_job:160:33) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+==> Exited with status 1
+==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+==> Running 'npm run build'
+> build
+> vite build
+vite.config.ts (7:29) [UNRESOLVED_IMPORT] Could not resolve '@lovable.dev/vite-tanstack-config' in vite.config.ts
+   ╭─[ vite.config.ts:7:30 ]
+   │
+ 7 │ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+   │                              ─────────────────┬─────────────────  
+   │                                               ╰─────────────────── Module not found, treating it as an external dependency
+───╯
+failed to load config from /opt/render/project/src/vite.config.ts
+error during build:
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@lovable.dev/vite-tanstack-config' imported from /opt/render/project/src/node_modules/.vite-temp/vite.config.ts.timestamp-1784448202372-35f5550c81318.mjs
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:301:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:859:18)
+    at defaultResolve (node:internal/modules/esm/resolve:991:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:719:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:736:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:765:52)
+    at #resolve (node:internal/modules/esm/loader:701:17)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:621:35)
+    at ModuleJob.syncLink (node:internal/modules/esm/module_job:160:33) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
