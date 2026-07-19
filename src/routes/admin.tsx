@@ -1,12 +1,12 @@
 import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import {
-  LogIn, UserPlus, LayoutDashboard, Calendar, Newspaper, FolderKanban,
+  LogIn, LayoutDashboard, Calendar, Newspaper, FolderKanban,
   BookOpen, MessageSquare, ChevronRight, GalleryHorizontal, FileText, Users,
   LogOut, Menu, Home, Info, Images, Phone,
 } from "lucide-react";
 import { AdminContext } from "@/lib/admin-context";
-import { staffLogin, staffRegister } from "@/lib/auth-fn";
+import { staffLogin } from "@/lib/auth-fn";
 
 export const Route = createFileRoute("/admin")({
   component: AdminLayoutRoute,
@@ -63,28 +63,15 @@ const NAV = [
 
 // ── Auth screen ───────────────────────────────────────────────────────────────
 
-type Tab = "login" | "register";
-
 function AuthScreen({
   onAuth,
 }: {
   onAuth: (token: string, email: string, name: string) => void;
 }) {
-  const [tab, setTab] = useState<Tab>("login");
-
-  // Login state
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPw, setLoginPw]       = useState("");
-
-  // Register state
-  const [regName,  setRegName]  = useState("");
-  const [regEmail, setRegEmail] = useState("");
-  const [regPw,    setRegPw]    = useState("");
-  const [regPw2,   setRegPw2]   = useState("");
-
-  const [loading, setLoading] = useState(false);
-  const [error,   setError]   = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading]       = useState(false);
+  const [error, setError]           = useState<string | null>(null);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -95,22 +82,6 @@ function AuthScreen({
       onAuth(r.token, r.email, r.name);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Login failed");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleRegister(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setSuccess(null);
-    if (regPw !== regPw2) { setError("Passwords do not match"); return; }
-    setLoading(true);
-    try {
-      const r = await staffRegister({ data: { name: regName, email: regEmail, password: regPw } });
-      onAuth(r.token, r.email, r.name);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -136,169 +107,46 @@ function AuthScreen({
           <p className="mt-1 text-sm text-muted-foreground">Unique Future Foundation</p>
         </div>
 
-        {/* Tab switcher */}
-        <div className="mb-5 flex rounded-lg border border-border bg-white p-1 shadow-sm">
-          <button
-            type="button"
-            onClick={() => { setTab("login"); setError(null); setSuccess(null); }}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-md py-2 text-sm font-semibold transition ${
-              tab === "login"
-                ? "bg-[var(--brand-navy)] text-white shadow"
-                : "text-muted-foreground hover:text-[var(--brand-navy)]"
-            }`}
-          >
-            <LogIn className="h-4 w-4" /> Sign In
-          </button>
-          <button
-            type="button"
-            onClick={() => { setTab("register"); setError(null); setSuccess(null); }}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-md py-2 text-sm font-semibold transition ${
-              tab === "register"
-                ? "bg-[var(--brand-navy)] text-white shadow"
-                : "text-muted-foreground hover:text-[var(--brand-navy)]"
-            }`}
-          >
-            <UserPlus className="h-4 w-4" /> Register
-          </button>
-        </div>
-
         <div className="rounded-lg border border-border bg-white p-6 shadow-sm">
-          {/* ── Login form ── */}
-          {tab === "login" && (
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <label className={labelCls}>Email Address</label>
-                <input
-                  type="email"
-                  required
-                  value={loginEmail}
-                  onChange={(e) => setLoginEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  autoComplete="email"
-                  className={inputCls}
-                />
-              </div>
-              <div>
-                <label className={labelCls}>Password</label>
-                <input
-                  type="password"
-                  required
-                  value={loginPw}
-                  onChange={(e) => setLoginPw(e.target.value)}
-                  placeholder="Enter your password"
-                  autoComplete="current-password"
-                  className={inputCls}
-                />
-              </div>
-              {error && (
-                <p className="rounded bg-red-50 px-3 py-2 text-xs font-medium text-red-700">
-                  {error}
-                </p>
-              )}
-              <button
-                type="submit"
-                disabled={loading}
-                className="inline-flex w-full items-center justify-center gap-2 rounded bg-[var(--brand-navy)] px-4 py-2.5 text-sm font-semibold text-white shadow hover:brightness-110 transition disabled:opacity-60"
-              >
-                <LogIn className="h-4 w-4" />
-                {loading ? "Signing in…" : "Sign In"}
-              </button>
-              <p className="text-center text-xs text-muted-foreground">
-                Don't have an account?{" "}
-                <button
-                  type="button"
-                  onClick={() => { setTab("register"); setError(null); }}
-                  className="font-semibold text-[var(--brand-green-dark)] hover:underline"
-                >
-                  Register here
-                </button>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className={labelCls}>Email Address</label>
+              <input
+                type="email"
+                required
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                placeholder="you@example.com"
+                autoComplete="email"
+                className={inputCls}
+              />
+            </div>
+            <div>
+              <label className={labelCls}>Password</label>
+              <input
+                type="password"
+                required
+                value={loginPw}
+                onChange={(e) => setLoginPw(e.target.value)}
+                placeholder="Enter your password"
+                autoComplete="current-password"
+                className={inputCls}
+              />
+            </div>
+            {error && (
+              <p className="rounded bg-red-50 px-3 py-2 text-xs font-medium text-red-700">
+                {error}
               </p>
-            </form>
-          )}
-
-          {/* ── Register form ── */}
-          {tab === "register" && (
-            <form onSubmit={handleRegister} className="space-y-4">
-              <div>
-                <label className={labelCls}>Full Name</label>
-                <input
-                  type="text"
-                  required
-                  value={regName}
-                  onChange={(e) => setRegName(e.target.value)}
-                  placeholder="Your full name"
-                  autoComplete="name"
-                  className={inputCls}
-                />
-              </div>
-              <div>
-                <label className={labelCls}>Email Address</label>
-                <input
-                  type="email"
-                  required
-                  value={regEmail}
-                  onChange={(e) => setRegEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  autoComplete="email"
-                  className={inputCls}
-                />
-              </div>
-              <div>
-                <label className={labelCls}>Password</label>
-                <input
-                  type="password"
-                  required
-                  minLength={6}
-                  value={regPw}
-                  onChange={(e) => setRegPw(e.target.value)}
-                  placeholder="At least 6 characters"
-                  autoComplete="new-password"
-                  className={inputCls}
-                />
-              </div>
-              <div>
-                <label className={labelCls}>Confirm Password</label>
-                <input
-                  type="password"
-                  required
-                  minLength={6}
-                  value={regPw2}
-                  onChange={(e) => setRegPw2(e.target.value)}
-                  placeholder="Repeat your password"
-                  autoComplete="new-password"
-                  className={inputCls}
-                />
-              </div>
-              {error && (
-                <p className="rounded bg-red-50 px-3 py-2 text-xs font-medium text-red-700">
-                  {error}
-                </p>
-              )}
-              {success && (
-                <p className="rounded bg-green-50 px-3 py-2 text-xs font-medium text-green-700">
-                  {success}
-                </p>
-              )}
-              <button
-                type="submit"
-                disabled={loading}
-                className="inline-flex w-full items-center justify-center gap-2 rounded bg-[var(--brand-green)] px-4 py-2.5 text-sm font-semibold text-white shadow hover:brightness-110 transition disabled:opacity-60"
-              >
-                <UserPlus className="h-4 w-4" />
-                {loading ? "Creating account…" : "Create Account"}
-              </button>
-              <p className="text-center text-xs text-muted-foreground">
-                Already have an account?{" "}
-                <button
-                  type="button"
-                  onClick={() => { setTab("login"); setError(null); }}
-                  className="font-semibold text-[var(--brand-green-dark)] hover:underline"
-                >
-                  Sign in here
-                </button>
-              </p>
-            </form>
-          )}
+            )}
+            <button
+              type="submit"
+              disabled={loading}
+              className="inline-flex w-full items-center justify-center gap-2 rounded bg-[var(--brand-navy)] px-4 py-2.5 text-sm font-semibold text-white shadow hover:brightness-110 transition disabled:opacity-60"
+            >
+              <LogIn className="h-4 w-4" />
+              {loading ? "Signing in…" : "Sign In"}
+            </button>
+          </form>
         </div>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
