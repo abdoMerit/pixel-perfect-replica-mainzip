@@ -10,8 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VolunteerRouteImport } from './routes/volunteer'
+import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as NewsRouteImport } from './routes/news'
+import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -36,6 +38,11 @@ const VolunteerRoute = VolunteerRouteImport.update({
   path: '/volunteer',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReportsRoute = ReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectsRoute = ProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
@@ -44,6 +51,11 @@ const ProjectsRoute = ProjectsRouteImport.update({
 const NewsRoute = NewsRouteImport.update({
   id: '/news',
   path: '/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalleryRoute = GalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventsRoute = EventsRouteImport.update({
@@ -143,8 +155,10 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/events': typeof EventsRoute
+  '/gallery': typeof GalleryRoute
   '/news': typeof NewsRoute
   '/projects': typeof ProjectsRoute
+  '/reports': typeof ReportsRoute
   '/volunteer': typeof VolunteerRoute
   '/admin/about-settings': typeof AdminAboutSettingsRoute
   '/admin/contact-settings': typeof AdminContactSettingsRoute
@@ -165,8 +179,10 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/events': typeof EventsRoute
+  '/gallery': typeof GalleryRoute
   '/news': typeof NewsRoute
   '/projects': typeof ProjectsRoute
+  '/reports': typeof ReportsRoute
   '/volunteer': typeof VolunteerRoute
   '/admin/about-settings': typeof AdminAboutSettingsRoute
   '/admin/contact-settings': typeof AdminContactSettingsRoute
@@ -189,8 +205,10 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/events': typeof EventsRoute
+  '/gallery': typeof GalleryRoute
   '/news': typeof NewsRoute
   '/projects': typeof ProjectsRoute
+  '/reports': typeof ReportsRoute
   '/volunteer': typeof VolunteerRoute
   '/admin/about-settings': typeof AdminAboutSettingsRoute
   '/admin/contact-settings': typeof AdminContactSettingsRoute
@@ -214,8 +232,10 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/events'
+    | '/gallery'
     | '/news'
     | '/projects'
+    | '/reports'
     | '/volunteer'
     | '/admin/about-settings'
     | '/admin/contact-settings'
@@ -236,8 +256,10 @@ export interface FileRouteTypes {
     | '/about'
     | '/contact'
     | '/events'
+    | '/gallery'
     | '/news'
     | '/projects'
+    | '/reports'
     | '/volunteer'
     | '/admin/about-settings'
     | '/admin/contact-settings'
@@ -259,8 +281,10 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/events'
+    | '/gallery'
     | '/news'
     | '/projects'
+    | '/reports'
     | '/volunteer'
     | '/admin/about-settings'
     | '/admin/contact-settings'
@@ -283,8 +307,10 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   ContactRoute: typeof ContactRoute
   EventsRoute: typeof EventsRoute
+  GalleryRoute: typeof GalleryRoute
   NewsRoute: typeof NewsRoute
   ProjectsRoute: typeof ProjectsRoute
+  ReportsRoute: typeof ReportsRoute
   VolunteerRoute: typeof VolunteerRoute
   ProgramsSlugRoute: typeof ProgramsSlugRoute
   ProgramsIndexRoute: typeof ProgramsIndexRoute
@@ -299,6 +325,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VolunteerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/projects': {
       id: '/projects'
       path: '/projects'
@@ -311,6 +344,13 @@ declare module '@tanstack/react-router' {
       path: '/news'
       fullPath: '/news'
       preLoaderRoute: typeof NewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gallery': {
+      id: '/gallery'
+      path: '/gallery'
+      fullPath: '/gallery'
+      preLoaderRoute: typeof GalleryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/events': {
@@ -478,8 +518,10 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   ContactRoute: ContactRoute,
   EventsRoute: EventsRoute,
+  GalleryRoute: GalleryRoute,
   NewsRoute: NewsRoute,
   ProjectsRoute: ProjectsRoute,
+  ReportsRoute: ReportsRoute,
   VolunteerRoute: VolunteerRoute,
   ProgramsSlugRoute: ProgramsSlugRoute,
   ProgramsIndexRoute: ProgramsIndexRoute,

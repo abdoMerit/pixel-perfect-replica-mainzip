@@ -12,6 +12,8 @@ export const NAV: { label: string; to: string }[] = [
   { label: "Projects", to: "/projects" },
   { label: "News", to: "/news" },
   { label: "Events", to: "/events" },
+  { label: "Gallery", to: "/gallery" },
+  { label: "Reports", to: "/reports" },
   { label: "Contact", to: "/contact" },
 ];
 
@@ -91,11 +93,10 @@ function Footer() {
     { label: "Contact", to: "/contact" },
   ];
   const resources = [
-    { label: "Publications", to: "/about" },
-    { label: "Reports", to: "/about" },
-    { label: "Gallery", to: "/projects" },
+    { label: "Reports & Publications", to: "/reports" },
+    { label: "Gallery", to: "/gallery" },
+    { label: "Volunteer With Us", to: "/volunteer" },
     { label: "FAQs", to: "/contact" },
-    { label: "Downloads", to: "/about" },
     { label: "Privacy Policy", to: "/contact" },
   ];
   return (
